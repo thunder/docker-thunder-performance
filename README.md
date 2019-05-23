@@ -26,7 +26,7 @@ The container will require some time to install Thunder and after that it will s
 - `CHROME_HOST` - Thunder test runner require Chrome host
 
 ### Elastic APM integration environments variables
-- `ELASTIC_APM_URL` - Elastic APM Server URL (for example: "http://127.0.0.1:8200")
+- `ELASTIC_APM_URL` - Elastic APM Server URL (for example: `http://127.0.0.1:8200`)
 - `ELASTIC_APM_CONTEXT_TAG_BRANCH` - Elastic APM requires branch information to group results
 
 ## How to build image

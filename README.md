@@ -1,16 +1,18 @@
 # Thunder CMS - Performance Docker Image
 
+**NOTE:** This image requires Database server, Selenium service and Elastic APM server. It's not designed to work independently.
+
 ## How to use this image
 
 The basic pattern for starting a Thunder Performance instance is:
 
-`docker run --name thunder -p 8080:8080/tcp -e "DB_HOST=mysql-host" thunder-php:latest`
+`docker run --name thunder-performance -p 8080:8080/tcp -e "DB_HOST=mysql-host" -e "CHROME_HOST=selenium-chrome-host" -e "THUNDER_HOST=thunder-host-for-chrome" -e "ELASTIC_APM_URL=http://elastic-apm-server:8200" thunder-performance:latest`
 
-The container will require some time to install Thunder and after that it will start to serve on port 8080.
+The container will require some time to install Thunder and after that it will start to serve on port 8080. Also, it will start executing performance tests. Performance tests are sending information to Elastic APM server.
 
 ## Available environment variables
 
-### Basic options
+### Database setup
 
 - `DB_HOST` - database host
 - `DB_NAME` - database name

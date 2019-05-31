@@ -41,4 +41,4 @@ You should cleanup Thunder project before packaging it to docker image. You can 
 
 After that, you can use `build.sh` script to package that project into docker image
 
-`./build.sh <path to Thunder project>`
+`./build.sh --project-path <path to Thunder project> --tag <Docker image tag>`

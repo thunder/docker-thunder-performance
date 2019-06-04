@@ -46,8 +46,13 @@ echo "THUNDER_BRANCH=${ELASTIC_APM_CONTEXT_TAG_BRANCH}" >> /home/thunder/www/doc
 echo "THUNDER_SITE_HOSTNAME=${THUNDER_HOST}" >> /home/thunder/www/docroot/core/.env
 echo "THUNDER_APM_URL=${ELASTIC_APM_URL}" >> /home/thunder/www/docroot/core/.env
 
-# Install and required modules
+# Install and enable required modules
 cd /home/thunder/www/docroot
+
+# Wait for database to be awailable
+while ! drush --quiet sql:query "SELECT 1 FROM DUAL;"; do
+    sleep 5
+done
 
 drush -y si thunder --debug
 drush -y en thunder_performance_measurement --debug

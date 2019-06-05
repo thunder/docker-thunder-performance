@@ -50,7 +50,7 @@ echo "THUNDER_APM_URL=${ELASTIC_APM_URL}" >> /home/thunder/www/docroot/core/.env
 cd /home/thunder/www/docroot
 
 # Wait for database to be awailable
-while ! drush --quiet sql:query "SELECT 1 FROM DUAL;"; do
+while drush --quiet sql:query "SELECT 1 FROM DUAL;"; do
     sleep 5
 done
 

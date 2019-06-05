@@ -95,4 +95,4 @@ ENV ELASTIC_APM_URL="http://127.0.0.1:8200"
 ENV ELASTIC_APM_CONTEXT_TAG_BRANCH="master"
 
 EXPOSE 8080/tcp
-CMD ["thunder-php-run"]
+CMD ["bash", "-x", "thunder-php-run"]

@@ -56,6 +56,14 @@ while drush --quiet sql:query "SELECT 1 FROM DUAL;"; do
     sleep 5
 done
 
+# Install Thunder site and required modules for building of test site
 drush -y si thunder --debug
-drush -y en thunder_performance_measurement --debug
+drush -y en thunder_performance_measurement testsite_builder --debug
+drush cr
+
+# Download test site template
+curl -s -o /home/thunder/www/docroot/thunder_test_site_template.json "${THUNDER_TEST_SITE_TEMPLATE}"
+
+# Create test site with downloaded template
+../bin/drupal testsite-builder:create-config /home/thunder/www/docroot/thunder_test_site_template.json --create-content --yes
 drush cr

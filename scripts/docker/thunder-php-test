@@ -20,6 +20,7 @@ done
 cd /home/thunder/www/docroot/core
 while true; do
     yarn test:nightwatch ../profiles/contrib/thunder/tests/src/Nightwatch/Tests/ArticleCreate.js
+    yarn test:nightwatch ../profiles/contrib/thunder/tests/src/Nightwatch/Tests/CreateMostUsedContent.js
 
     sleep 10
 done

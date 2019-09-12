@@ -2,6 +2,9 @@
 #
 # Build Docker image for testing
 
+# Install AWS CLI
+pip install --user awscli
+
 # Get latest successful Thunder 8.x-3.x build
 THUNDER_LATEST_BUILD_ID=$(curl -X GET 'https://api.travis-ci.com/v3/repo/thunder%2Fthunder-distribution/builds?branch.name=8.x-3.x&build.state=passed&limit=1' -H 'Content-Type: application/json' -s | jq --raw-output '.builds[0].id')
 

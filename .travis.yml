@@ -1,0 +1,9 @@
+language: bash
+services: docker
+
+install:
+  - bash -x -e ./test/travis-ci-build.sh
+
+script:
+  - docker-compose -f "${TRAVIS_BUILD_DIR}/test/docker-composer.travis-ci.yml" -p test up &
+  - bash -x -e ./test/travis-ci-run.sh

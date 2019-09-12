@@ -20,6 +20,3 @@ tar -zxf "${TRAVIS_BUILD_DIR}/../${THUNDER_PROJECT_ARTIFACT_FILE}" -C "${TRAVIS_
 
 # Build image with tag
 ./build.sh --tag "travis-ci-test"
-
-# Build Testing Docker compose
-docker-compose -f "${TRAVIS_BUILD_DIR}/test/docker-composer.travis-ci.yml" -p test build

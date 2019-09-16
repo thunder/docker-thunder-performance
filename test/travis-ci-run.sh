@@ -28,11 +28,15 @@ done
 curl -s "http://localhost:8080/" | grep -q "meta.*Generator.*Thunder"
 
 # Check that relevant modules are installed
-docker exec "${TEST_THUNDER_PHP_DOCKER_ID}" su - thunder -c 'cd www; drush pml --status=enabled --format=json;' | jq -e '.thunder_performance_measurement'
+docker exec "${TEST_THUNDER_PHP_DOCKER_ID}" su - thunder -c 'cd www; drush pml --status=enabled --format=json;' | jq -e '.thunder_performance_measurement, .testsite_builder, .media_entity_generic'
 
 # Check that required Node.JS package is installed for Elastic APM
 docker exec "${TEST_THUNDER_PHP_DOCKER_ID}" su - thunder -c 'cd /home/thunder/www/docroot/core/node_modules/elastic-apm-node;'
 
+# Check that test site template is fetched
+docker exec "${TEST_THUNDER_PHP_DOCKER_ID}" su - thunder -c 'ls -h /home/thunder/www/docroot/thunder_test_site_template.json;'
+
 # Check that envirovment variables are set for thunder user
 docker exec "${TEST_THUNDER_PHP_DOCKER_ID}" su - thunder -c '[ "${THUNDER_HOST}" == "localhost" ] && [ "${CHROME_HOST}" == "chrome" ] && echo "All Good!" || exit 1'
 docker exec "${TEST_THUNDER_PHP_DOCKER_ID}" su - thunder -c '[ "${ELASTIC_APM_URL}" == "http://127.0.0.1:8200" ] && [ "${ELASTIC_APM_CONTEXT_TAG_BRANCH}" == "travis-ci-test" ] && echo "All Good!" || exit 1'
+docker exec "${TEST_THUNDER_PHP_DOCKER_ID}" su - thunder -c '[ "${THUNDER_TEST_SITE_TEMPLATE}" == "https://raw.githubusercontent.com/thunder/thunder-performance-site-templates/master/thunder_base_set.json" ] && echo "All Good!" || exit 1'

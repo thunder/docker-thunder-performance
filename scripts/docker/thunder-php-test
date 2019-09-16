@@ -5,7 +5,7 @@
 cd /home/thunder/www/docroot || exit 1
 
 echo 'Serving on: 0.0.0.0:8080 ...'
-php -S 0.0.0.0:8080 .ht.router.php &
+php --server 0.0.0.0:8080 .ht.router.php &
 
 status=$?
 if [ $status -ne 0 ]; then

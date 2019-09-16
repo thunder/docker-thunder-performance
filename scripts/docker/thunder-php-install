@@ -56,6 +56,6 @@ while drush --quiet sql:query "SELECT 1 FROM DUAL;"; do
     sleep 5
 done
 
-drush -y si thunder --debug
-drush -y en thunder_performance_measurement --debug
-drush cr
+drush --yes site:install thunder --debug
+drush --yes pm:enable thunder_performance_measurement --debug
+drush cache:rebuild

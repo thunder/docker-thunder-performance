@@ -9,44 +9,44 @@ RUN set -xe; \
     \
     adduser --gecos "" --disabled-password thunder; \
     \
-    usermod -aG sudo thunder;
+    usermod --append --groups sudo thunder;
 
 # Install required libraries and packages
 RUN set -xe; \
     \
     apt-get update; \
     \
-    apt-get install -y --no-install-recommends \
+    apt-get install --yes --no-install-recommends \
         gnupg \
         apt-transport-https \
     ; \
     \
-    curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - ; \
+    curl --silent --show-error https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - ; \
     \
     echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list; \
     \
     apt-get update; \
     \
-    apt-get install -y --no-install-recommends \
+    apt-get install --yes --no-install-recommends \
         yarn \
     ; \
     \
-    su - thunder -c "curl -o- https://raw.githubusercontent.com/creationix/nvm/${NVM_VERSION}/install.sh | bash"; \
+    su - thunder --command="curl -o- https://raw.githubusercontent.com/creationix/nvm/${NVM_VERSION}/install.sh | bash"; \
     \
     echo -e "\nexport NVM_DIR=\"\$HOME/.nvm\"\n[ -s \"\$NVM_DIR/nvm.sh\" ] && \. \"\$NVM_DIR/nvm.sh\"\n" >> /home/thunder/.profile; \
     \
-    su - thunder -c "nvm install node"; \
+    su - thunder --command="nvm install node"; \
     \
-    apt list --installed | grep -o '.*-dev' | xargs apt-get purge -y; \
+    apt list --installed | grep --only-matching '.*-dev' | xargs apt-get purge --yes; \
     \
-    apt purge -y \
+    apt purge --yes \
         gnupg \
         apt-transport-https \
     ; \
     \
     apt-get clean; \
     \
-    rm -rf /var/lib/apt/lists/*;
+    rm --recursive --force /var/lib/apt/lists/*;
 
 # Copy run scripts
 COPY scripts/docker/thunder-php-install /usr/local/bin/
@@ -68,15 +68,15 @@ COPY --chown=thunder:thunder www /home/thunder/www
 # Install Elastic APM
 RUN set -xe; \
     \
-    su - thunder -c "cd /home/thunder/www/docroot/core; yarn add elastic-apm-node --dev"; \
+    su - thunder --command="cd /home/thunder/www/docroot/core; yarn add elastic-apm-node --dev"; \
     \
-    su - thunder -c "yarn cache clean"; \
+    su - thunder --command="yarn cache clean"; \
     \
-    su - thunder -c "composer global require drush/drush"; \
+    su - thunder --command="composer global require drush/drush"; \
     \
     echo -e "\nexport PATH=\"\$PATH:/home/thunder/.composer/vendor/bin\"\n" >> /home/thunder/.profile; \
     \
-    su - thunder -c "composer clear-cache";
+    su - thunder --command="composer clear-cache";
 
 # Define all runtime environments
 ENV DB_HOST="127.0.0.1"

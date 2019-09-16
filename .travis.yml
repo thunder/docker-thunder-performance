@@ -5,6 +5,9 @@ branches:
   only:
     - master
 
+before_install:
+  - shellcheck scripts/docker/* test/*.sh
+
 install:
   - bash -x -e ./test/travis-ci-build.sh
 

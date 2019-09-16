@@ -29,6 +29,7 @@ HASH_SALT="$(openssl rand -hex 32)"
   echo -e "\$databases['default']['default']['namespace'] = 'Drupal\\Core\\Database\\Driver\\${DB_DIVER}';\n";
   echo -e "\$databases['default']['default']['driver'] = '${DB_DIVER}';\n";
 } >> /home/thunder/www/docroot/sites/default/settings.php
+
 # Remove write for settings.php
 chmod a-w /home/thunder/www/docroot/sites/default/settings.php
 

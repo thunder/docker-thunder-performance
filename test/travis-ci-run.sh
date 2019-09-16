@@ -13,7 +13,7 @@ CURRENT_TIMESTAMP=$(date +%s)
 WAIT_UNTIL_TIMESTAMP=$((CURRENT_TIMESTAMP + MAX_WAIT))
 
 # Wait for server to be ready
-until $(curl --output /dev/null --silent --head --fail "http://localhost:8080/"); do
+until curl --output /dev/null --silent --head --fail "http://localhost:8080/"; do
     if [[ $(date +%s) -gt "${WAIT_UNTIL_TIMESTAMP}" ]]; then
       echo "Max execution time exceeded"
 

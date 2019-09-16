@@ -40,7 +40,7 @@ if [[ "${PROJECT_PATH}" != "" ]]; then
 fi
 
 # CleanUp project
-find "${SCRIPT_DIRECTORY}/www" -type d -name ".git" | xargs rm --recursive --force
+find "${SCRIPT_DIRECTORY}/www" -type d -name ".git" -print0 | xargs -0 rm --recursive --force
 
 # Build docker image
 docker build "${SCRIPT_DIRECTORY}" --tag "${TAG_NAME}"

@@ -3,21 +3,23 @@
 # Install Thunder and run performance test
 
 # Set all runtime environments for "thunder" user
-echo -e "\n" >> /home/thunder/.profile;
-echo -e "export DB_HOST=\"$DB_HOST\"\n" >> /home/thunder/.profile;
-echo -e "export DB_NAME=\"$DB_NAME\"\n" >> /home/thunder/.profile;
-echo -e "export DB_USER=\"$DB_USER\"\n" >> /home/thunder/.profile;
-echo -e "export DB_PASS=\"$DB_PASS\"\n" >> /home/thunder/.profile;
-echo -e "export DB_PORT=\"$DB_PORT\"\n" >> /home/thunder/.profile;
-echo -e "export DB_DIVER=\"$DB_DIVER\"\n" >> /home/thunder/.profile;
+{
+    echo -e "\n";
+    echo -e "export DB_HOST=\"$DB_HOST\"\n";
+    echo -e "export DB_NAME=\"$DB_NAME\"\n";
+    echo -e "export DB_USER=\"$DB_USER\"\n";
+    echo -e "export DB_PASS=\"$DB_PASS\"\n";
+    echo -e "export DB_PORT=\"$DB_PORT\"\n";
+    echo -e "export DB_DIVER=\"$DB_DIVER\"\n";
 
-echo -e "\n" >> /home/thunder/.profile;
-echo -e "export THUNDER_HOST=\"$THUNDER_HOST\"\n" >> /home/thunder/.profile;
-echo -e "export CHROME_HOST=\"$CHROME_HOST\"\n" >> /home/thunder/.profile;
+    echo -e "\n";
+    echo -e "export THUNDER_HOST=\"$THUNDER_HOST\"\n";
+    echo -e "export CHROME_HOST=\"$CHROME_HOST\"\n";
 
-echo -e "\n" >> /home/thunder/.profile;
-echo -e "export ELASTIC_APM_URL=\"$ELASTIC_APM_URL\"\n" >> /home/thunder/.profile;
-echo -e "export ELASTIC_APM_CONTEXT_TAG_BRANCH=\"$ELASTIC_APM_CONTEXT_TAG_BRANCH\"\n" >> /home/thunder/.profile;
+    echo -e "\n";
+    echo -e "export ELASTIC_APM_URL=\"$ELASTIC_APM_URL\"\n";
+    echo -e "export ELASTIC_APM_CONTEXT_TAG_BRANCH=\"$ELASTIC_APM_CONTEXT_TAG_BRANCH\"\n";
+} >> /home/thunder/.profile;
 
 # Build, install and serve Thunder
 su - thunder --command="bash -x thunder-php-install && bash -x thunder-php-test"

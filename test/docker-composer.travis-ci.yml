@@ -3,12 +3,15 @@ version: '3.3'
 services:
   dbhost:
     image: 'mysql:5.7'
+    command: ['--secure-file-priv=', '--skip-grant-tables']
     restart: 'always'
     environment:
       MYSQL_RANDOM_ROOT_PASSWORD: 'true'
       MYSQL_DATABASE: 'thunder'
       MYSQL_USER: 'thunder'
       MYSQL_PASSWORD: 'thunder'
+    volumes:
+      - 'tmp-dir:/tmp'
   chrome:
     image: 'selenium/standalone-chrome:3.141.59-oxygen'
   thunder-php:
@@ -19,3 +22,7 @@ services:
       ELASTIC_APM_CONTEXT_TAG_BRANCH: 'travis-ci-test'
     ports:
       - '8080:8080'
+    volumes:
+      - 'tmp-dir:/tmp'
+volumes:
+  tmp-dir:

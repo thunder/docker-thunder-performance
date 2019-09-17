@@ -68,5 +68,5 @@ drush cache:rebuild
 curl --silent --output /home/thunder/www/docroot/thunder_test_site_template.json "${THUNDER_TEST_SITE_TEMPLATE}"
 
 # Create test site with downloaded template
-../bin/drupal testsite-builder:create-config /home/thunder/www/docroot/thunder_test_site_template.json --create-content --yes
+/home/thunder/www/vendor/drupal/console/bin/drupal testsite-builder:create-config /home/thunder/www/docroot/thunder_test_site_template.json --create-content --yes
 drush cache:rebuild

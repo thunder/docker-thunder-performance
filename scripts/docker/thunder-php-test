@@ -2,10 +2,10 @@
 #
 # Server and run Nightwatch JS Tests
 
-cd /home/thunder/www/docroot
+cd /home/thunder/www/docroot || exit 1
 
 echo 'Serving on: 0.0.0.0:8080 ...'
-php -S 0.0.0.0:8080 .ht.router.php &
+php --server 0.0.0.0:8080 .ht.router.php &
 
 status=$?
 if [ $status -ne 0 ]; then
@@ -17,7 +17,7 @@ while ! curl --output /dev/null --silent --head --fail http://localhost:8080; do
     sleep 1
 done
 
-cd /home/thunder/www/docroot/core
+cd /home/thunder/www/docroot/core || exit 1
 while true; do
     yarn test:nightwatch ../profiles/contrib/thunder/tests/src/Nightwatch/Tests/CreateMostUsedContent.js
 

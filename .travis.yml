@@ -5,9 +5,12 @@ branches:
   only:
     - master
 
+before_install:
+  - shellcheck --exclude=SC2016 scripts/docker/* test/*.sh
+
 install:
   - bash -x -e ./test/travis-ci-build.sh
 
 script:
-  - docker-compose -f "${TRAVIS_BUILD_DIR}/test/docker-composer.travis-ci.yml" -p test up &
+  - docker-compose --file "${TRAVIS_BUILD_DIR}/test/docker-composer.travis-ci.yml" --project-name test up &
   - bash -x -e ./test/travis-ci-run.sh

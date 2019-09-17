@@ -6,7 +6,7 @@
 
 The basic pattern for starting a Thunder Performance instance is:
 
-`docker run --name thunder-performance -p 8080:8080/tcp -e "DB_HOST=mysql-host" -e "CHROME_HOST=selenium-chrome-host" -e "THUNDER_HOST=thunder-host-for-chrome" -e "ELASTIC_APM_URL=http://elastic-apm-server:8200" thunder-performance:latest`
+`docker run --name thunder-performance --publish 8080:8080/tcp --env "DB_HOST=mysql-host" --env "CHROME_HOST=selenium-chrome-host" --env "THUNDER_HOST=thunder-host-for-chrome"--env "ELASTIC_APM_URL=http://elastic-apm-server:8200" thunder-performance:latest`
 
 The container will require some time to install Thunder and after that it will start to serve on port 8080. Also, it will start executing performance tests. Performance tests are sending information to Elastic APM server.
 
@@ -36,8 +36,8 @@ The container will require some time to install Thunder and after that it will s
 You should cleanup Thunder project before packaging it to docker image. You can do following steps:
 
 - remove dev dependencies `composer install --no-dev`
-- remove all files form `sites/default/files` directory `rm -rf docroot/sites/default/files/*`
-- remove `.git` directories `find . -type d -name ".git" | xargs rm -rf` (build script will do this automatically)
+- remove all files form `sites/default/files` directory `rm --recursive --force docroot/sites/default/files/*`
+- remove `.git` directories `find . -type d -name ".git" | xargs rm --recursive --force` (build script will do this automatically)
 
 After that, you can use `build.sh` script to package that project into docker image
 

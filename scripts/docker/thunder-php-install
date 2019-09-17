@@ -19,15 +19,16 @@ if (!isset(\$databases)) {
 EOF
 
 HASH_SALT="$(openssl rand -hex 32)"
-echo -e "\$settings['hash_salt'] = '${HASH_SALT}';\n\n" >> /home/thunder/www/docroot/sites/default/settings.php
-
-echo -e "\$databases['default']['default']['host'] = '${DB_HOST}';\n" >> /home/thunder/www/docroot/sites/default/settings.php
-echo -e "\$databases['default']['default']['port'] = '${DB_PORT}';\n" >> /home/thunder/www/docroot/sites/default/settings.php
-echo -e "\$databases['default']['default']['database'] = '${DB_NAME}';\n" >> /home/thunder/www/docroot/sites/default/settings.php
-echo -e "\$databases['default']['default']['username'] = '${DB_USER}';\n" >> /home/thunder/www/docroot/sites/default/settings.php
-echo -e "\$databases['default']['default']['password'] = '${DB_PASS}';\n" >> /home/thunder/www/docroot/sites/default/settings.php
-echo -e "\$databases['default']['default']['namespace'] = 'Drupal\\Core\\Database\\Driver\\${DB_DIVER}';\n" >> /home/thunder/www/docroot/sites/default/settings.php
-echo -e "\$databases['default']['default']['driver'] = '${DB_DIVER}';\n" >> /home/thunder/www/docroot/sites/default/settings.php
+{
+  echo -e "\$settings['hash_salt'] = '${HASH_SALT}';\n\n";
+  echo -e "\$databases['default']['default']['host'] = '${DB_HOST}';\n";
+  echo -e "\$databases['default']['default']['port'] = '${DB_PORT}';\n";
+  echo -e "\$databases['default']['default']['database'] = '${DB_NAME}';\n";
+  echo -e "\$databases['default']['default']['username'] = '${DB_USER}';\n";
+  echo -e "\$databases['default']['default']['password'] = '${DB_PASS}';\n";
+  echo -e "\$databases['default']['default']['namespace'] = 'Drupal\\Core\\Database\\Driver\\${DB_DIVER}';\n";
+  echo -e "\$databases['default']['default']['driver'] = '${DB_DIVER}';\n";
+} >> /home/thunder/www/docroot/sites/default/settings.php
 
 # Remove write for settings.php
 chmod a-w /home/thunder/www/docroot/sites/default/settings.php
@@ -35,19 +36,21 @@ chmod a-w /home/thunder/www/docroot/sites/default/settings.php
 # Tweak .env file for testing
 # .env file
 cp /home/thunder/www/docroot/core/.env.example /home/thunder/www/docroot/core/.env
-echo "DRUPAL_TEST_WEBDRIVER_CHROME_ARGS=\\\`--disable-gpu --headless --no-sandbox --disable-web-security\\\`" >> /home/thunder/www/docroot/core/.env
-echo "DRUPAL_TEST_CHROMEDRIVER_AUTOSTART=false" >> /home/thunder/www/docroot/core/.env
-echo "DRUPAL_TEST_WEBDRIVER_PORT=4444" >> /home/thunder/www/docroot/core/.env
-echo "DRUPAL_TEST_WEBDRIVER_PATH_PREFIX=/wd/hub" >> /home/thunder/www/docroot/core/.env
-echo "DRUPAL_TEST_BASE_URL=http://${THUNDER_HOST}:8080" >> /home/thunder/www/docroot/core/.env
-echo "DRUPAL_TEST_DB_URL=mysql://thunder@${DB_HOST}:3306/thunder" >> /home/thunder/www/docroot/core/.env
-echo "DRUPAL_TEST_WEBDRIVER_HOSTNAME=${CHROME_HOST}" >> /home/thunder/www/docroot/core/.env
-echo "THUNDER_BRANCH=${ELASTIC_APM_CONTEXT_TAG_BRANCH}" >> /home/thunder/www/docroot/core/.env
-echo "THUNDER_SITE_HOSTNAME=${THUNDER_HOST}" >> /home/thunder/www/docroot/core/.env
-echo "THUNDER_APM_URL=${ELASTIC_APM_URL}" >> /home/thunder/www/docroot/core/.env
+{
+  echo "DRUPAL_TEST_WEBDRIVER_CHROME_ARGS=\\\`--disable-gpu --headless --no-sandbox --disable-web-security\\\`";
+  echo "DRUPAL_TEST_CHROMEDRIVER_AUTOSTART=false";
+  echo "DRUPAL_TEST_WEBDRIVER_PORT=4444";
+  echo "DRUPAL_TEST_WEBDRIVER_PATH_PREFIX=/wd/hub";
+  echo "DRUPAL_TEST_BASE_URL=http://${THUNDER_HOST}:8080";
+  echo "DRUPAL_TEST_DB_URL=mysql://thunder@${DB_HOST}:3306/thunder";
+  echo "DRUPAL_TEST_WEBDRIVER_HOSTNAME=${CHROME_HOST}";
+  echo "THUNDER_BRANCH=${ELASTIC_APM_CONTEXT_TAG_BRANCH}";
+  echo "THUNDER_SITE_HOSTNAME=${THUNDER_HOST}";
+  echo "THUNDER_APM_URL=${ELASTIC_APM_URL}";
+} >> /home/thunder/www/docroot/core/.env
 
 # Install and enable required modules
-cd /home/thunder/www/docroot
+cd /home/thunder/www/docroot || exit 1
 
 # Wait for database to be awailable
 sleep 60
@@ -56,6 +59,6 @@ while drush --quiet sql:query "SELECT 1 FROM DUAL;"; do
     sleep 5
 done
 
-drush -y si thunder --debug
-drush -y en thunder_performance_measurement --debug
-drush cr
+drush --yes site:install thunder --debug
+drush --yes pm:enable thunder_performance_measurement --debug
+drush cache:rebuild

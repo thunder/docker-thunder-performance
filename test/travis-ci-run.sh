@@ -40,6 +40,6 @@ docker exec "${TEST_THUNDER_PHP_DOCKER_ID}" su - thunder --command='cd /home/thu
 docker exec "${TEST_THUNDER_PHP_DOCKER_ID}" su - thunder --command='ls /home/thunder/www/docroot/thunder_test_site_template.json;'
 
 # Check that envirovment variables are set for thunder user
-docker exec "${TEST_THUNDER_PHP_DOCKER_ID}" su - thunder --command='[ "${THUNDER_HOST}" == "localhost" ] && [ "${CHROME_HOST}" == "chrome" ] && echo "All Good!" || exit 1'
+docker exec "${TEST_THUNDER_PHP_DOCKER_ID}" su - thunder --command='[ "${THUNDER_HOST}" == "thunder-php" ] && [ "${CHROME_HOST}" == "chrome" ] && echo "All Good!" || exit 1'
 docker exec "${TEST_THUNDER_PHP_DOCKER_ID}" su - thunder --command='[ "${ELASTIC_APM_URL}" == "http://127.0.0.1:8200" ] && [ "${ELASTIC_APM_CONTEXT_TAG_BRANCH}" == "travis-ci-test" ] && echo "All Good!" || exit 1'
 docker exec "${TEST_THUNDER_PHP_DOCKER_ID}" su - thunder --command='[ "${THUNDER_TEST_SITE_TEMPLATE}" == "https://raw.githubusercontent.com/thunder/thunder-performance-site-templates/master/thunder_base_set.json" ] && echo "All Good!" || exit 1'

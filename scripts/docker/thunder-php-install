@@ -64,6 +64,9 @@ drush --yes site:install thunder --debug
 drush --yes pm:enable thunder_performance_measurement testsite_builder media_entity_generic  --debug
 drush cache:rebuild
 
+# Prepare Database for testsite_builder content creator
+drush php:eval '$db = new PDO("mysql:host='"${DB_HOST}"';", "root", "root"); $db->exec("GRANT FILE, SUPER on *.* to '"'"'thunder'"'"';"); $db->exec("FLUSH PRIVILEGES;");'
+
 # Download test site template
 curl --silent --output /home/thunder/www/docroot/thunder_test_site_template.json "${THUNDER_TEST_SITE_TEMPLATE}"
 

@@ -30,7 +30,8 @@ curl --silent "http://localhost:8080/" | grep --silent "meta.*Generator.*Thunder
 # Check that relevant modules are installed
 docker exec "${TEST_THUNDER_PHP_DOCKER_ID}" su - thunder --command='cd /home/thunder/www/docroot; drush pm:list --status=enabled --format=json;' | jq --exit-status '.thunder_performance_measurement, .media_entity_generic'
 
-# Workaround for testsite_builder until Drush is fixed
+# Workaround for testsite_builder module name until Drush is fixed
+# TODO: Move check back to "drush pm:list" command when Drush issue is fixed (https://github.com/drush-ops/drush/issues/4182)
 docker exec "${TEST_THUNDER_PHP_DOCKER_ID}" su - thunder --command='cd /home/thunder/www/docroot; /home/thunder/www/vendor/drupal/console/bin/drupal debug:module --status=enabled;' | grep --silent "testsite_builder"
 
 # Check that required Node.JS package is installed for Elastic APM

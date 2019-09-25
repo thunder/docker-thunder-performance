@@ -19,7 +19,7 @@ done
 
 cd /home/thunder/www/docroot/core || exit 1
 while true; do
-    yarn test:nightwatch ../profiles/contrib/thunder/tests/src/Nightwatch/Tests/CreateMostUsedContent.js
+    yarn test:nightwatch --tag "${THUNDER_TEST_GROUP}"
 
     sleep 10
 done

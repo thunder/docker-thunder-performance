@@ -44,3 +44,4 @@ docker exec "${TEST_THUNDER_PHP_DOCKER_ID}" su - thunder --command='ls /home/thu
 docker exec "${TEST_THUNDER_PHP_DOCKER_ID}" su - thunder --command='[ "${THUNDER_HOST}" == "thunder-php" ] && [ "${CHROME_HOST}" == "chrome" ] && echo "All Good!" || exit 1'
 docker exec "${TEST_THUNDER_PHP_DOCKER_ID}" su - thunder --command='[ "${ELASTIC_APM_URL}" == "http://127.0.0.1:8200" ] && [ "${ELASTIC_APM_CONTEXT_TAG_BRANCH}" == "travis-ci-test" ] && echo "All Good!" || exit 1'
 docker exec "${TEST_THUNDER_PHP_DOCKER_ID}" su - thunder --command='[ "${THUNDER_TEST_SITE_TEMPLATE}" == "https://raw.githubusercontent.com/thunder/thunder-performance-site-templates/master/thunder_base_set.json" ] && echo "All Good!" || exit 1'
+docker exec "${TEST_THUNDER_PHP_DOCKER_ID}" su - thunder --command='[ "${THUNDER_TEST_GROUP}" == "Thunder_Base_Set" ] && echo "All Good!" || exit 1'

@@ -87,9 +87,10 @@ ENV DB_PORT="3306"
 ENV DB_DIVER="mysql"
 
 # Test related environment variables
-ENV THUNDER_HOST=localhost
-ENV CHROME_HOST=localhost
-ENV THUNDER_TEST_SITE_TEMPLATE=https://raw.githubusercontent.com/thunder/thunder-performance-site-templates/master/thunder_base_set.json
+ENV THUNDER_HOST="localhost"
+ENV CHROME_HOST="localhost"
+ENV THUNDER_TEST_SITE_TEMPLATE="https://raw.githubusercontent.com/thunder/thunder-performance-site-templates/master/thunder_base_set.json"
+ENV THUNDER_TEST_GROUP="Thunder_Base_Set"
 
 # Elastic APM integration environments variables
 ENV ELASTIC_APM_URL="http://127.0.0.1:8200"

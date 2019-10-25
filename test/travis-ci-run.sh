@@ -2,9 +2,6 @@
 #
 # Build Docker image for testing
 
-# Docker ID of Thunder PHP container
-TEST_THUNDER_PHP_DOCKER_ID=$(docker ps | grep 8080 | awk '{ print $1 }')
-
 # Maximum wait time in seconds (15 mins)
 MAX_WAIT=900
 
@@ -26,6 +23,9 @@ done
 
 # Check that Thunder is running correctly
 curl --silent "http://localhost:8080/" | grep --silent "meta.*Generator.*Thunder"
+
+# Docker ID of Thunder PHP container
+TEST_THUNDER_PHP_DOCKER_ID=$(docker ps --format 'table {{.Names}}' | grep 'thunder-php')
 
 # Check that relevant modules are installed
 docker exec "${TEST_THUNDER_PHP_DOCKER_ID}" su - thunder --command='cd /home/thunder/www/docroot; drush pm:list --status=enabled --format=json;' | jq --exit-status '.thunder_performance_measurement, .media_entity_generic'

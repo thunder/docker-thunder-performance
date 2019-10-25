@@ -35,7 +35,7 @@ RUN set -xe; \
     \
     echo -e "\nexport NVM_DIR=\"\$HOME/.nvm\"\n[ -s \"\$NVM_DIR/nvm.sh\" ] && \. \"\$NVM_DIR/nvm.sh\"\n" >> /home/thunder/.profile; \
     \
-    su - thunder --command="nvm install node"; \
+    su - thunder --command="nvm install --lts node"; \
     \
     apt list --installed | grep --only-matching '.*-dev' | xargs apt-get purge --yes; \
     \

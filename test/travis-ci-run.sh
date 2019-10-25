@@ -3,7 +3,7 @@
 # Build Docker image for testing
 
 # Docker ID of Thunder PHP container
-TEST_THUNDER_PHP_DOCKER_ID="test_thunder-php_1"
+TEST_THUNDER_PHP_DOCKER_ID=$(docker ps | grep 8080 | awk '{ print $1 }')
 
 # Maximum wait time in seconds (15 mins)
 MAX_WAIT=900

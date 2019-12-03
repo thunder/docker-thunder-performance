@@ -7,10 +7,11 @@ cd /home/thunder/www/docroot || exit 1
 echo 'Serving on: 0.0.0.0:8080 ...'
 php --server 0.0.0.0:8080 .ht.router.php &
 
-status=$?
-if [ $status -ne 0 ]; then
-  echo "Failed to start '.ht.router.php': $status"
-  exit $status
+STATUS=$?
+if [ $STATUS -ne 0 ]; then
+    echo "Failed to start '.ht.router.php': ${STATUS}"
+
+    exit $STATUS
 fi
 
 while ! curl --output /dev/null --silent --head --fail http://localhost:8080; do
@@ -18,8 +19,5 @@ while ! curl --output /dev/null --silent --head --fail http://localhost:8080; do
 done
 
 cd /home/thunder/www/docroot/core || exit 1
-while true; do
-    yarn test:nightwatch --tag "${THUNDER_TEST_GROUP}"
 
-    sleep 10
-done
+yarn test:nightwatch --tag "${THUNDER_TEST_GROUP}"

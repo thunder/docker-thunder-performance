@@ -34,9 +34,9 @@ RUN set -xe; \
     \
     su - thunder --command="nvm install --lts node"; \
     \
-    su - thunder --command="npm config set update-notifier false" \
+    su - thunder --command="npm config set update-notifier false"; \
     \
-    apt-get list --installed | grep --only-matching '.*-dev' | xargs apt-get purge --yes; \
+    dpkg --get-selections | grep --only-matching '.*-dev' | xargs apt-get purge --yes; \
     \
     apt-get purge --yes gnupg apt-transport-https; \
     \

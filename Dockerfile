@@ -1,3 +1,4 @@
+# hadolint ignore=DL3007
 FROM burda/thunder-php:latest
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
@@ -12,14 +13,12 @@ RUN set -xe; \
     usermod --append --groups sudo thunder;
 
 # Install required libraries and packages
+# hadolint ignore=DL3008
 RUN set -xe; \
     \
     apt-get update; \
     \
-    apt-get install --yes --no-install-recommends \
-        gnupg \
-        apt-transport-https \
-    ; \
+    apt-get install --yes --no-install-recommends gnupg apt-transport-https; \
     \
     curl --silent --show-error https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - ; \
     \
@@ -27,9 +26,7 @@ RUN set -xe; \
     \
     apt-get update; \
     \
-    apt-get install --yes --no-install-recommends \
-        yarn \
-    ; \
+    apt-get install --yes --no-install-recommends yarn; \
     \
     su - thunder --command="curl -o- https://raw.githubusercontent.com/creationix/nvm/${NVM_VERSION}/install.sh | bash"; \
     \
@@ -37,12 +34,11 @@ RUN set -xe; \
     \
     su - thunder --command="nvm install --lts node"; \
     \
-    apt list --installed | grep --only-matching '.*-dev' | xargs apt-get purge --yes; \
+    su - thunder --command="npm config set update-notifier false" \
     \
-    apt purge --yes \
-        gnupg \
-        apt-transport-https \
-    ; \
+    apt-get list --installed | grep --only-matching '.*-dev' | xargs apt-get purge --yes; \
+    \
+    apt-get purge --yes gnupg apt-transport-https; \
     \
     apt-get clean; \
     \

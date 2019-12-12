@@ -74,5 +74,5 @@ curl --silent --output /home/thunder/www/docroot/thunder_test_site_template.json
 /home/thunder/www/vendor/drupal/console/bin/drupal testsite-builder:create-config /home/thunder/www/docroot/thunder_test_site_template.json --create-content --yes
 drush cache:rebuild
 
-# Worm-up thunder_performance_measurement site info endpoint cache
+# Warm-up thunder_performance_measurement site info endpoint cache
 time drush php:eval 'Drupal\thunder_performance_measurement\Controller\SiteInfoController::create(Drupal::getContainer())->siteInfo(Symfony\Component\HttpFoundation\Request::createFromGlobals());' --debug

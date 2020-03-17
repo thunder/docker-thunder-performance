@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+#
+# Install Thunder and run performance test
+
+# Set all runtime environments for "thunder" user
+{
+    echo -e "\n";
+    echo -e "export DB_HOST=\"$DB_HOST\"\n";
+    echo -e "export DB_NAME=\"$DB_NAME\"\n";
+    echo -e "export DB_USER=\"$DB_USER\"\n";
+    echo -e "export DB_PASS=\"$DB_PASS\"\n";
+    echo -e "export DB_PORT=\"$DB_PORT\"\n";
+    echo -e "export DB_DIVER=\"$DB_DIVER\"\n";
+
+    echo -e "\n";
+    echo -e "export DOC_ROOT=\"$DOC_ROOT\"\n";
+    echo -e "export PROFILE=\"$PROFILE\"\n";
+
+    echo -e "\n";
+    echo -e "export THUNDER_HOST=\"$THUNDER_HOST\"\n";
+    echo -e "export CHROME_HOST=\"$CHROME_HOST\"\n";
+    echo -e "export THUNDER_TEST_SITE_TEMPLATE=\"$THUNDER_TEST_SITE_TEMPLATE\"\n";
+    echo -e "export THUNDER_TEST_GROUP=\"$THUNDER_TEST_GROUP\"\n";
+
+    echo -e "\n";
+    echo -e "export ELASTIC_APM_URL=\"$ELASTIC_APM_URL\"\n";
+    echo -e "export ELASTIC_APM_CONTEXT_TAG_BRANCH=\"$ELASTIC_APM_CONTEXT_TAG_BRANCH\"\n";
+} >> /home/thunder/.profile;
+
+# Build, install and serve Thunder
+su - thunder --command="bash -x standard-php-install && bash -x standard-php-test"

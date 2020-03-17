@@ -4,6 +4,7 @@ FROM burda/thunder-php:latest
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 ARG NVM_VERSION="v0.34.0"
+ARG COMPOSER_ROOT_VERSION="8.8.3"
 
 # Create required user
 RUN set -xe; \
@@ -18,7 +19,7 @@ RUN set -xe; \
     \
     apt-get update; \
     \
-    apt-get install --yes --no-install-recommends gnupg apt-transport-https; \
+    apt-get install --yes --no-install-recommends gnupg apt-transport-https unzip; \
     \
     curl --silent --show-error https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - ; \
     \
@@ -45,21 +46,33 @@ RUN set -xe; \
     rm --recursive --force /var/lib/apt/lists/*;
 
 # Copy run scripts
-COPY scripts/docker/thunder-php-install /usr/local/bin/
-COPY scripts/docker/thunder-php-test /usr/local/bin/
-COPY scripts/docker/thunder-php-run /usr/local/bin/
+COPY scripts/docker/standard-php-install /usr/local/bin/
+COPY scripts/docker/standard-php-test /usr/local/bin/
+COPY scripts/docker/standard-php-run /usr/local/bin/
 
 # Set executable
 RUN set -xe; \
     \
-    chmod +x /usr/local/bin/thunder-php-install; \
+    chmod +x /usr/local/bin/standard-php-install; \
     \
-    chmod +x /usr/local/bin/thunder-php-test; \
+    chmod +x /usr/local/bin/standard-php-test; \
     \
-    chmod +x /usr/local/bin/thunder-php-run;
+    chmod +x /usr/local/bin/standard-php-run;
 
 # Copy pre-build Thunder project to container
 COPY --chown=thunder:thunder www /home/thunder/www
+
+# Build codebase.
+RUN set -xe; \
+    \
+    su - thunder --command="cd /home/thunder/www; composer install --no-dev"; \
+    \
+    su - thunder --command="cd /home/thunder/www; COMPOSER_ROOT_VERSION=${COMPOSER_ROOT_VERSION} composer require drush/drush thunder/thunder_performance_measurement thunder/testsite_builder drupal/media_entity_generic"; \
+    \
+    echo -e "\nexport PATH=\"\$PATH:/home/thunder/www/vendor/bin\"\n" >> /home/thunder/.profile; \
+    \
+    su - thunder --command="composer clear-cache";
+
 
 # Install Elastic APM
 RUN set -xe; \
@@ -67,10 +80,6 @@ RUN set -xe; \
     su - thunder --command="cd /home/thunder/www/docroot/core; yarn add elastic-apm-node --dev"; \
     \
     su - thunder --command="yarn cache clean"; \
-    \
-    su - thunder --command="composer global require drush/drush"; \
-    \
-    echo -e "\nexport PATH=\"\$PATH:/home/thunder/.composer/vendor/bin\"\n" >> /home/thunder/.profile; \
     \
     su - thunder --command="composer clear-cache";
 
@@ -81,6 +90,10 @@ ENV DB_USER="thunder"
 ENV DB_PASS="thunder"
 ENV DB_PORT="3306"
 ENV DB_DIVER="mysql"
+
+# Build environment variables
+ENV DOC_ROOT="/home/thunder/www/web"
+ENV PROFILE="standard"
 
 # Test related environment variables
 ENV THUNDER_HOST="localhost"

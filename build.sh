@@ -1,4 +1,21 @@
 #!/bin/bash
+set -e
+
+case $(uname | tr '[:upper:]' '[:lower:]') in
+  linux*)
+    export OS_NAME=linux
+    ;;
+  darwin*)
+    export OS_NAME=osx
+    ;;
+  msys*)
+    export OS_NAME=windows
+    ;;
+  *)
+    export OS_NAME=notset
+    ;;
+esac
+
 #
 # Build thunder performance docker image
 
@@ -36,11 +53,21 @@ SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pw
 
 # Copy Thunder prject to Dockerfile context if project path is provided
 if [[ "${PROJECT_PATH}" != "" ]]; then
-    cp --dereference --recursive "${PROJECT_PATH}" "${SCRIPT_DIRECTORY}/www"
+    if [[ "${OS_NAME}" == "osx" ]]; then
+        rm -rf "${SCRIPT_DIRECTORY}/www"
+        cp -R "${PROJECT_PATH}" "${SCRIPT_DIRECTORY}/www"
+    else
+        rm --recursive --force  "${SCRIPT_DIRECTORY}/www"
+        cp --dereference --recursive "${PROJECT_PATH}" "${SCRIPT_DIRECTORY}/www"
+    fi
 fi
 
 # CleanUp project
-find "${SCRIPT_DIRECTORY}/www" -type d -name ".git" -print0 | xargs -0 rm --recursive --force
+if [[ "${OS_NAME}" == "osx" ]]; then
+  find "${SCRIPT_DIRECTORY}/www" -type d -name ".git" -print0 | xargs -0 rm -rf
+else
+  find "${SCRIPT_DIRECTORY}/www" -type d -name ".git" -print0 | xargs -0 rm --recursive --force
+fi
 
 # Build docker image
 docker build "${SCRIPT_DIRECTORY}" --tag "${TAG_NAME}"

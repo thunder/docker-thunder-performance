@@ -2,7 +2,7 @@
 #
 # Server and run Nightwatch JS Tests
 
-cd /home/thunder/www/docroot || exit 1
+cd "${DOC_ROOT}" || exit 1
 
 echo "Serving on: 0.0.0.0:8080 ..."
 php --server 0.0.0.0:8080 .ht.router.php &
@@ -20,7 +20,7 @@ while ! curl --output /dev/null --silent --head --fail "http://localhost:8080"; 
     sleep 1
 done
 
-cd /home/thunder/www/docroot/core || exit 1
+cd "${DOC_ROOT}"/core || exit 1
 
 echo "Starting tests..."
 yarn test:nightwatch --tag "${THUNDER_TEST_GROUP}"

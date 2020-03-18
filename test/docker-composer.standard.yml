@@ -20,6 +20,7 @@ services:
       DB_HOST: 'dbhost'
       CHROME_HOST: 'chrome'
       THUNDER_HOST: 'thunder-php'
+      PROFILE: 'standard'
       ELASTIC_APM_CONTEXT_TAG_BRANCH: 'travis-ci-test'
     ports:
       - '8080:8080'

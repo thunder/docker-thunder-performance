@@ -3,13 +3,13 @@
 # Install Drupal Standard install profile
 
 # Create a settings.php
-copy ${DOC_ROOT}/sites/default/default.settings.php ${DOC_ROOT}/sites/default/settings.php
+cp "${DOC_ROOT}"/sites/default/default.settings.php "${DOC_ROOT}"/sites/default/settings.php
 
 # Add write for settings.php
-chmod a+w ${DOC_ROOT}/sites/default/settings.php
+chmod a+w "${DOC_ROOT}"/sites/default/settings.php
 
 # Adjust settings.php
-cat <<EOF >>${DOC_ROOT}/sites/default/settings.php
+cat <<EOF >>"${DOC_ROOT}"/sites/default/settings.php
 
 if (!isset(\$databases)) {
   \$databases = [];
@@ -23,6 +23,7 @@ EOF
 
 HASH_SALT="$(openssl rand -hex 32)"
 {
+  echo -e "\$settings['config_sync_directory'] = '../config/sync';\n"
   echo -e "\$settings['hash_salt'] = '${HASH_SALT}';\n\n"
   echo -e "\$databases['default']['default']['host'] = '${DB_HOST}';\n"
   echo -e "\$databases['default']['default']['port'] = '${DB_PORT}';\n"
@@ -31,14 +32,14 @@ HASH_SALT="$(openssl rand -hex 32)"
   echo -e "\$databases['default']['default']['password'] = '${DB_PASS}';\n"
   echo -e "\$databases['default']['default']['namespace'] = 'Drupal\\Core\\Database\\Driver\\${DB_DIVER}';\n"
   echo -e "\$databases['default']['default']['driver'] = '${DB_DIVER}';\n"
-} >>${DOC_ROOT}/sites/default/settings.php
+} >>"${DOC_ROOT}"/sites/default/settings.php
 
 # Remove write for settings.php
-chmod a-w ${DOC_ROOT}/sites/default/settings.php
+chmod a-w "${DOC_ROOT}"/sites/default/settings.php
 
 # Tweak .env file for testing
 # .env file
-cp ${DOC_ROOT}/core/.env.example ${DOC_ROOT}/core/.env
+cp "${DOC_ROOT}"/core/.env.example "${DOC_ROOT}"/core/.env
 {
   echo "DRUPAL_TEST_WEBDRIVER_CHROME_ARGS=\\\`--disable-gpu --headless --no-sandbox --disable-web-security\\\`"
   echo "DRUPAL_TEST_CHROMEDRIVER_AUTOSTART=false"
@@ -50,32 +51,39 @@ cp ${DOC_ROOT}/core/.env.example ${DOC_ROOT}/core/.env
   echo "THUNDER_BRANCH=${ELASTIC_APM_CONTEXT_TAG_BRANCH}"
   echo "THUNDER_SITE_HOSTNAME=${THUNDER_HOST}"
   echo "THUNDER_APM_URL=${ELASTIC_APM_URL}"
-} >>/home/thunder/www/docroot/core/.env
+} >>"${DOC_ROOT}"/core/.env
 
 # Install and enable required modules
-cd ${DOC_ROOT} || exit 1
+cd "${DOC_ROOT}" || exit 1
 
 # Wait for database to be available
-sleep 20
 
-while drush --quiet sql:query "SELECT 1 FROM DUAL;"; do
-  sleep 5
+count=1
+until nc -z "${DB_HOST}" "${DB_PORT}"; do
+    sleep 1
+    if [[ ${count} -gt 60 ]]; then
+        printf "Error: Timeout while waiting for port %s on host %s.\n" "${DB_HOST}" "${DB_PORT}" 1>&2
+        exit 1
+    fi
+    count=$((count + 1))
 done
 
+
 # Install Thunder site and required modules for building of test site
-drush --yes site:install ${PROFILE} --debug
-drush --yes pm:enable thunder_performance_measurement testsite_builder media_entity_generic --debug
+drush --yes site:install "${PROFILE}"
+drush --yes pm:enable thunder_performance_measurement testsite_builder media_entity_generic
 drush cache:rebuild
 
 # Prepare Database for testsite_builder content creator
+# shellcheck disable=SC2016
 drush php:eval '$db = new PDO("mysql:host='"${DB_HOST}"';", "root", "root"); $db->exec("GRANT FILE, SUPER on *.* to '"'"'thunder'"'"';"); $db->exec("FLUSH PRIVILEGES;");'
 
 # Download test site template
-curl --silent --output ${DOC_ROOT}/thunder_test_site_template.json "${THUNDER_TEST_SITE_TEMPLATE}"
+curl --silent --output "${DOC_ROOT}"/thunder_test_site_template.json "${THUNDER_TEST_SITE_TEMPLATE}"
 
 # Create test site with downloaded template
-/home/thunder/www/vendor/drupal/console/bin/drupal testsite-builder:create-config ${DOC_ROOT}thunder_test_site_template.json --create-content --yes
+"${INSTALLATION_DIRECTORY}"/console/bin/drupal testsite-builder:create-config "${DOC_ROOT}"/thunder_test_site_template.json --create-content --yes
 drush cache:rebuild
 
 # Warm-up thunder_performance_measurement site info endpoint cache
-time drush php:eval 'Drupal\thunder_performance_measurement\Controller\SiteInfoController::create(Drupal::getContainer())->siteInfo(Symfony\Component\HttpFoundation\Request::createFromGlobals());' --debug
+time drush php:eval 'Drupal\thunder_performance_measurement\Controller\SiteInfoController::create(Drupal::getContainer())->siteInfo(Symfony\Component\HttpFoundation\Request::createFromGlobals());'

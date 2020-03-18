@@ -28,4 +28,4 @@
 } >> /home/thunder/.profile;
 
 # Build, install and serve Thunder
-su - thunder --command="bash -x standard-php-install && bash -x standard-php-test"
+su - thunder --command="bash -x drupal-php-install && bash -x drupal-php-test"

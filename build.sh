@@ -51,7 +51,7 @@ done
 
 SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
-# Copy Thunder prject to Dockerfile context if project path is provided
+# Copy Thunder project to Dockerfile context if project path is provided
 if [[ "${PROJECT_PATH}" != "" ]]; then
     if [[ "${OS_NAME}" == "osx" ]]; then
         rm -rf "${SCRIPT_DIRECTORY}/www"

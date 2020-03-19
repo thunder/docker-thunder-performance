@@ -15,6 +15,7 @@
     echo -e "\n";
     echo -e "export DOC_ROOT=\"$DOC_ROOT\"\n";
     echo -e "export PROFILE=\"$PROFILE\"\n";
+    echo -e "export INSTALLATION_DIRECTORY=\"$INSTALLATION_DIRECTORY\"\n";
 
     echo -e "\n";
     echo -e "export THUNDER_HOST=\"$THUNDER_HOST\"\n";

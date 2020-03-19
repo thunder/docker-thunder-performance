@@ -82,7 +82,7 @@ drush php:eval '$db = new PDO("mysql:host='"${DB_HOST}"';", "root", "root"); $db
 curl --silent --output "${DOC_ROOT}"/thunder_test_site_template.json "${THUNDER_TEST_SITE_TEMPLATE}"
 
 # Create test site with downloaded template
-"${INSTALLATION_DIRECTORY}"/console/bin/drupal testsite-builder:create-config "${DOC_ROOT}"/thunder_test_site_template.json --create-content --yes
+"${INSTALLATION_DIRECTORY}"/vendor/drupal/console/bin/drupal testsite-builder:create-config "${DOC_ROOT}"/thunder_test_site_template.json --create-content --yes
 drush cache:rebuild
 
 # Warm-up thunder_performance_measurement site info endpoint cache

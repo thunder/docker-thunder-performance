@@ -21,6 +21,7 @@ services:
       CHROME_HOST: 'chrome'
       THUNDER_HOST: 'thunder-php'
       PROFILE: 'standard'
+      THUNDER_TEST_GROUP: 'Standard'
       ELASTIC_APM_CONTEXT_TAG_BRANCH: 'travis-ci-test'
     ports:
       - '8080:8080'

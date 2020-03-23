@@ -1,8 +1,13 @@
 #!/usr/bin/env bash
 
+# Drupal core's docroot.
 cd ${INSTALLATION_DIRECTORY}
 
+# Thunder's docroot
 [ -d "docroot" ] && cd docroot
+
+# Core recommended's docroot
+[ -d "web" ] && cd web
 
 # Set up DOC_ROOT environment variable.
 echo "export DOC_ROOT=\"$(pwd)}\"\n" >> /home/thunder/.profile

@@ -6,7 +6,6 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 ARG NVM_VERSION="v0.34.0"
 ARG COMPOSER_ROOT_VERSION="8.8.3"
 ARG INSTALLATION_DIRECTORY="/home/thunder/www"
-ARG PROFILE="thunder"
 
 # Create required user
 RUN set -xe; \
@@ -78,7 +77,6 @@ RUN set -xe; \
 
 # Set DOC_ROOT environment var
 ENV INSTALLATION_DIRECTORY=${INSTALLATION_DIRECTORY}
-ENV PROFILE=${PROFILE}
 RUN set -xe; \
     \
     su - thunder --command="set-docroot";

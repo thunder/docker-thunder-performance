@@ -47,10 +47,7 @@ RUN set -xe; \
     rm --recursive --force /var/lib/apt/lists/*;
 
 # Copy run scripts
-COPY scripts/docker/drupal-php-install /usr/local/bin/
-COPY scripts/docker/drupal-php-test /usr/local/bin/
-COPY scripts/docker/drupal-php-run /usr/local/bin/
-COPY scripts/docker/set-docroot /usr/local/bin/
+COPY scripts/docker/* /usr/local/bin/
 
 # Set executable
 RUN set -xe; \
@@ -61,10 +58,20 @@ RUN set -xe; \
     \
     chmod +x /usr/local/bin/drupal-php-run; \
     \
-    chmod +x /usr/local/bin/set-docroot;
+    chmod +x /usr/local/bin/set-docroot; \
+    \
+    chmod +x /usr/local/bin/install-elastic-apm;
 
 # Copy pre-build Thunder project to container
 COPY --chown=thunder:thunder www ${INSTALLATION_DIRECTORY}
+
+# Set DOC_ROOT environment var
+ENV INSTALLATION_DIRECTORY=${INSTALLATION_DIRECTORY}
+RUN set -xe; \
+    \
+    set-docroot; \
+    \
+    cat /home/thunder/.profile;
 
 # Build codebase.
 RUN set -xe; \
@@ -73,22 +80,15 @@ RUN set -xe; \
     \
     su - thunder --command="cd ${INSTALLATION_DIRECTORY}; COMPOSER_MEMORY_LIMIT=-1 COMPOSER_ROOT_VERSION=${COMPOSER_ROOT_VERSION} composer require drush/drush:~9 thunder/thunder_performance_measurement thunder/testsite_builder drupal/media_entity_generic"; \
     \
-    echo -e "\nexport PATH=\"\$PATH:${INSTALLATION_DIRECTORY}/bin:${INSTALLATION_DIRECTORY}/vendor/bin\"\n" >> /home/thunder/.profile;
-
-# Set DOC_ROOT environment var
-ENV INSTALLATION_DIRECTORY=${INSTALLATION_DIRECTORY}
-RUN set -xe; \
-    \
-    su - thunder --command="set-docroot";
-
-# Install Elastic APM
-RUN set -xe; \
-    \
-    su - thunder --command="cd ${DOC_ROOT}/core; yarn add elastic-apm-node --dev"; \
-    \
-    su - thunder --command="yarn cache clean"; \
+    echo -e "\nexport PATH=\"\$PATH:${INSTALLATION_DIRECTORY}/bin:${INSTALLATION_DIRECTORY}/vendor/bin\"\n" >> /home/thunder/.profile; \
     \
     su - thunder --command="composer clear-cache";
+
+# Install Elastic APM - this is run as a shell script so we can install in the
+# doc root.
+RUN set -xe; \
+    \
+    su - thunder --command="install-elastic-apm";
 
 # Define all runtime environments
 ENV DB_HOST="127.0.0.1"

@@ -50,7 +50,7 @@ After that, you can use `build.sh` script to package that project into docker im
 First of all, you have to create an image whenever you change something that could affect docker image content. For example docker scripts, Dockerfile, code in `www` folder, and so on.
 
 1. You can create an image for testing locally with the following command: `./build.sh --tag travis-ci-test:latest`. We are using tag `travis-ci-test:latest`, because we are using the same tag in `test/docker-composer.travis-ci.yml` and we can use existing docker composer file without any changes.
-2. After you have built a docker image for local testing, you can start docker-compose with the following command: `docker-compose --file="test/docker-composer.travis-ci.yml" --project-name test up`. The whole stack requires some time to get up and running. If you get a result after executing: `curl "http://localhost:8080/"`, then the stack is up and running.
+2. After you have built a docker image for local testing, you can start docker-compose with the following command: `docker-compose --file="test/docker-composer.thunder.yml" --project-name test up`. The whole stack requires some time to get up and running. If you get a result after executing: `curl "http://localhost:8080/"`, then the stack is up and running.
 3. Finally, you can run the same checks local as it would be on Travis CI by executing `./test/travis-ci-run.sh`
 
 ### Running image on AWS Fargate

@@ -13,7 +13,6 @@
     echo -e "export DB_DIVER=\"$DB_DIVER\"\n";
 
     echo -e "\n";
-    echo -e "export DOC_ROOT=\"$DOC_ROOT\"\n";
     echo -e "export PROFILE=\"$PROFILE\"\n";
     echo -e "export INSTALLATION_DIRECTORY=\"$INSTALLATION_DIRECTORY\"\n";
 

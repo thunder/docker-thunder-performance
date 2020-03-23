@@ -10,4 +10,10 @@ cd ${INSTALLATION_DIRECTORY}
 [ -d "web" ] && cd web
 
 # Set up DOC_ROOT environment variable.
-echo "export DOC_ROOT=\"$(pwd)}\"\n" >> /home/thunder/.profile
+echo "Setting DOC_ROOT to $(pwd)"
+
+{
+    echo -e "\n";
+    echo -e "export DOC_ROOT=\"$(pwd)\"\n";
+    echo -e "\n";
+} >> /home/thunder/.profile;

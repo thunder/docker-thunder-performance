@@ -6,6 +6,7 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 ARG NVM_VERSION="v0.34.0"
 ARG COMPOSER_ROOT_VERSION="8.8.3"
 ARG INSTALLATION_DIRECTORY="/home/thunder/www"
+ARG PROFILE="thunder"
 
 # Create required user
 RUN set -xe; \
@@ -50,6 +51,7 @@ RUN set -xe; \
 COPY scripts/docker/drupal-php-install /usr/local/bin/
 COPY scripts/docker/drupal-php-test /usr/local/bin/
 COPY scripts/docker/drupal-php-run /usr/local/bin/
+COPY scripts/docker/set-docroot /usr/local/bin/
 
 # Set executable
 RUN set -xe; \
@@ -58,7 +60,9 @@ RUN set -xe; \
     \
     chmod +x /usr/local/bin/drupal-php-test; \
     \
-    chmod +x /usr/local/bin/drupal-php-run;
+    chmod +x /usr/local/bin/drupal-php-run; \
+    \
+    chmod +x /usr/local/bin/set-docroot;
 
 # Copy pre-build Thunder project to container
 COPY --chown=thunder:thunder www ${INSTALLATION_DIRECTORY}
@@ -66,16 +70,23 @@ COPY --chown=thunder:thunder www ${INSTALLATION_DIRECTORY}
 # Build codebase.
 RUN set -xe; \
     \
+    su - thunder --command="cd ${INSTALLATION_DIRECTORY}; COMPOSER_MEMORY_LIMIT=-1 COMPOSER_ROOT_VERSION=${COMPOSER_ROOT_VERSION} composer install --no-dev"; \
+    \
     su - thunder --command="cd ${INSTALLATION_DIRECTORY}; COMPOSER_MEMORY_LIMIT=-1 COMPOSER_ROOT_VERSION=${COMPOSER_ROOT_VERSION} composer require drush/drush:~9 thunder/thunder_performance_measurement thunder/testsite_builder drupal/media_entity_generic"; \
     \
-    su - thunder --command="cd ${INSTALLATION_DIRECTORY}; COMPOSER_MEMORY_LIMIT=-1 composer install --no-dev"; \
-    \
     echo -e "\nexport PATH=\"\$PATH:${INSTALLATION_DIRECTORY}/bin:${INSTALLATION_DIRECTORY}/vendor/bin\"\n" >> /home/thunder/.profile;
+
+# Set DOC_ROOT environment var
+ENV INSTALLATION_DIRECTORY=${INSTALLATION_DIRECTORY}
+ENV PROFILE=${PROFILE}
+RUN set -xe; \
+    \
+    su - thunder --command="set-docroot";
 
 # Install Elastic APM
 RUN set -xe; \
     \
-    su - thunder --command="cd ${INSTALLATION_DIRECTORY}/docroot/core; yarn add elastic-apm-node --dev"; \
+    su - thunder --command="cd ${DOC_ROOT}/core; yarn add elastic-apm-node --dev"; \
     \
     su - thunder --command="yarn cache clean"; \
     \
@@ -88,11 +99,6 @@ ENV DB_USER="thunder"
 ENV DB_PASS="thunder"
 ENV DB_PORT="3306"
 ENV DB_DIVER="mysql"
-
-# Build environment variables
-ENV INSTALLATION_DIRECTORY=${INSTALLATION_DIRECTORY}
-ENV DOC_ROOT="${INSTALLATION_DIRECTORY}/docroot"
-ENV PROFILE="thunder"
 
 # Test related environment variables
 ENV THUNDER_HOST="localhost"

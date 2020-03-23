@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+cd ${INSTALLATION_DIRECTORY}
+
+[ -d "docroot" ] && cd docroot
+
+# Set up DOC_ROOT environment variable.
+echo "export DOC_ROOT=\"$(pwd)}\"\n" >> /home/thunder/.profile

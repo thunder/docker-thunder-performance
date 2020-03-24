@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
-cd ${DOC_ROOT}/core
+cd "${DOC_ROOT}"/core || exit 1
 yarn add elastic-apm-node --dev
 yarn cache clean

@@ -91,6 +91,14 @@ RUN set -xe; \
     \
     su - thunder --command="install-elastic-apm";
 
+# Provision core tests
+# @todo move this to one of our modules only work with core checkout atm.
+RUN set -xe; \
+    \
+    mkdir -p ${INSTALLATION_DIRECTORY}/modules/contrib/testsite_builder/tests;
+
+COPY --chown=thunder:thunder coretests ${INSTALLATION_DIRECTORY}/modules/contrib/testsite_builder/tests
+
 # Define all runtime environments
 ENV DB_HOST="127.0.0.1"
 ENV DB_NAME="thunder"

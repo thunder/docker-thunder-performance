@@ -30,12 +30,18 @@ The container will require some time to install Thunder and after that it will s
 - `ELASTIC_APM_CONTEXT_TAG_BRANCH` - Elastic APM requires branch information to group results
 
 ## How to build image
+In order to not hit github rate limits the env var COMPOSER_AUTH should be set.
+For example:
+- `COMPOSER_AUTH='{"github-oauth": {"github.com": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"}}'`
+
+See [Managing Composer Github access with Personal Access Tokens](https://www.previousnext.com.au/blog/managing-composer-github-access-personal-access-tokens)
+for more information about how to obtain a token from github. Note the token is
+not stored in the docker image. It is only used to compose the codebase.
 
 ### Prepare Thunder project for Docker image
 
 You should cleanup Thunder project before packaging it to docker image. You can do following steps:
 
-- remove dev dependencies `composer install --no-dev`
 - remove all files form `sites/default/files` directory `rm --recursive --force docroot/sites/default/files/*`
 - remove `.git` directories `find . -type d -name ".git" | xargs rm --recursive --force` (build script will do this automatically)
 

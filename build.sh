@@ -70,4 +70,4 @@ else
 fi
 
 # Build docker image
-docker build "${SCRIPT_DIRECTORY}" --tag "${TAG_NAME}"
+docker build --build-arg COMPOSER_AUTH="${COMPOSER_AUTH}" "${SCRIPT_DIRECTORY}" --tag "${TAG_NAME}"

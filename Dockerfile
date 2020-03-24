@@ -6,6 +6,7 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 ARG NVM_VERSION="v0.34.0"
 ARG COMPOSER_ROOT_VERSION="8.8.3"
 ARG INSTALLATION_DIRECTORY="/home/thunder/www"
+ARG COMPOSER_AUTH
 
 # Create required user
 RUN set -xe; \
@@ -76,9 +77,9 @@ RUN set -xe; \
 # Build codebase.
 RUN set -xe; \
     \
-    su - thunder --command="cd ${INSTALLATION_DIRECTORY}; COMPOSER_MEMORY_LIMIT=-1 COMPOSER_ROOT_VERSION=${COMPOSER_ROOT_VERSION} composer install --no-dev"; \
+    su - thunder --command="cd ${INSTALLATION_DIRECTORY}; COMPOSER_MEMORY_LIMIT=-1 COMPOSER_AUTH='${COMPOSER_AUTH}' COMPOSER_ROOT_VERSION=${COMPOSER_ROOT_VERSION} composer install --no-dev"; \
     \
-    su - thunder --command="cd ${INSTALLATION_DIRECTORY}; COMPOSER_MEMORY_LIMIT=-1 COMPOSER_ROOT_VERSION=${COMPOSER_ROOT_VERSION} composer require drush/drush:~9 thunder/thunder_performance_measurement thunder/testsite_builder drupal/media_entity_generic"; \
+    su - thunder --command="cd ${INSTALLATION_DIRECTORY}; COMPOSER_MEMORY_LIMIT=-1 COMPOSER_AUTH='${COMPOSER_AUTH}' COMPOSER_ROOT_VERSION=${COMPOSER_ROOT_VERSION} composer require  drush/drush:^9 thunder/thunder_performance_measurement thunder/testsite_builder drupal/media_entity_generic --update-no-dev"; \
     \
     echo -e "\nexport PATH=\"\$PATH:${INSTALLATION_DIRECTORY}/bin:${INSTALLATION_DIRECTORY}/vendor/bin\"\n" >> /home/thunder/.profile; \
     \

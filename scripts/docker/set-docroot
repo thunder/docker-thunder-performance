@@ -4,10 +4,12 @@
 cd "${INSTALLATION_DIRECTORY}" || exit 1
 
 # Thunder's docroot
-[ -d "docroot" ] && cd docroot || exit 1
+# shellcheck disable=SC2164
+[ -d "docroot" ] && cd docroot
 
 # Core recommended's docroot
-[ -d "web" ] && cd web || exit 1
+# shellcheck disable=SC2164
+[ -d "web" ] && cd web
 
 # Set up DOC_ROOT environment variable.
 echo "Setting DOC_ROOT to $(pwd)"

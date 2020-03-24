@@ -61,7 +61,7 @@ done
 
 # Install Thunder site and required modules for building of test site
 drush --yes site:install thunder --debug
-drush --yes pm:enable thunder_performance_measurement testsite_builder media_entity_generic --debug
+drush --yes pm:enable thunder_performance_measurement testsite_builder media_entity_generic thunder_search_api --debug
 drush cache:rebuild
 
 # Prepare Database for testsite_builder content creator

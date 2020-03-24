@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 
 # Drupal core's docroot.
-cd ${INSTALLATION_DIRECTORY}
+cd "${INSTALLATION_DIRECTORY}" || exit 1
 
 # Thunder's docroot
-[ -d "docroot" ] && cd docroot
+[ -d "docroot" ] && cd docroot || exit 1
 
 # Core recommended's docroot
-[ -d "web" ] && cd web
+[ -d "web" ] && cd web || exit 1
 
 # Set up DOC_ROOT environment variable.
 echo "Setting DOC_ROOT to $(pwd)"

@@ -79,7 +79,7 @@ RUN set -xe; \
     \
     su - thunder --command="cd ${INSTALLATION_DIRECTORY}; COMPOSER_MEMORY_LIMIT=-1 COMPOSER_AUTH='${COMPOSER_AUTH}' COMPOSER_ROOT_VERSION=${COMPOSER_ROOT_VERSION} composer install --no-dev"; \
     \
-    su - thunder --command="cd ${INSTALLATION_DIRECTORY}; COMPOSER_MEMORY_LIMIT=-1 COMPOSER_AUTH='${COMPOSER_AUTH}' COMPOSER_ROOT_VERSION=${COMPOSER_ROOT_VERSION} composer require  drush/drush:^9 thunder/thunder_performance_measurement thunder/testsite_builder drupal/media_entity_generic --update-no-dev"; \
+    su - thunder --command="cd ${INSTALLATION_DIRECTORY}; COMPOSER_MEMORY_LIMIT=-1 COMPOSER_AUTH='${COMPOSER_AUTH}' COMPOSER_ROOT_VERSION=${COMPOSER_ROOT_VERSION} composer require  drush/drush:^9 thunder/thunder_performance_measurement thunder/testsite_builder drupal/media_entity_generic drupal/console --update-no-dev"; \
     \
     echo -e "\nexport PATH=\"\$PATH:${INSTALLATION_DIRECTORY}/bin:${INSTALLATION_DIRECTORY}/vendor/bin\"\n" >> /home/thunder/.profile; \
     \

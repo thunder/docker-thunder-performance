@@ -7,6 +7,8 @@ ARG NVM_VERSION="v0.34.0"
 ARG COMPOSER_ROOT_VERSION="8.8.3"
 ARG INSTALLATION_DIRECTORY="/home/thunder/www"
 ARG COMPOSER_AUTH
+ARG THUNDER_TEST_GROUP="Thunder_Base_Set"
+ARG PROFILE="thunder"
 
 # Create required user
 RUN set -xe; \
@@ -61,7 +63,9 @@ RUN set -xe; \
     \
     chmod +x /usr/local/bin/set-docroot; \
     \
-    chmod +x /usr/local/bin/install-elastic-apm;
+    chmod +x /usr/local/bin/install-elastic-apm; \
+    \
+    ln -sfn /usr/local/bin/drupal-php-run /usr/local/bin/thunder-php-run;
 
 # Copy pre-build Thunder project to container
 COPY --chown=thunder:thunder www ${INSTALLATION_DIRECTORY}
@@ -111,7 +115,8 @@ ENV DB_DIVER="mysql"
 ENV THUNDER_HOST="localhost"
 ENV CHROME_HOST="localhost"
 ENV THUNDER_TEST_SITE_TEMPLATE="https://raw.githubusercontent.com/thunder/thunder-performance-site-templates/master/thunder_base_set.json"
-ENV THUNDER_TEST_GROUP="Thunder_Base_Set"
+ENV THUNDER_TEST_GROUP=${THUNDER_TEST_GROUP}
+ENV PROFILE=${PROFILE}
 
 # Elastic APM integration environments variables
 ENV ELASTIC_APM_URL="http://127.0.0.1:8200"

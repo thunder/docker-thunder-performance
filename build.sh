@@ -21,6 +21,8 @@ esac
 
 TAG_NAME=""
 PROJECT_PATH=""
+PROFILE="thunder"
+THUNDER_TEST_GROUP="Thunder_Base_Set"
 
 # Process script options
 while [ -n "$1" ]; do
@@ -39,6 +41,18 @@ while [ -n "$1" ]; do
             fi
 
             PROJECT_PATH="$2"
+
+            shift
+            ;;
+
+        --profile)
+            PROFILE="$2"
+
+            shift
+            ;;
+
+        --test-group)
+            THUNDER_TEST_GROUP="$2"
 
             shift
             ;;
@@ -70,4 +84,4 @@ else
 fi
 
 # Build docker image
-docker build --build-arg COMPOSER_AUTH="${COMPOSER_AUTH}" "${SCRIPT_DIRECTORY}" --tag "${TAG_NAME}"
+docker build --build-arg COMPOSER_AUTH="${COMPOSER_AUTH}" --build-arg PROFILE="${PROFILE}" --build-arg THUNDER_TEST_GROUP="${THUNDER_TEST_GROUP}" "${SCRIPT_DIRECTORY}" --tag "${TAG_NAME}"

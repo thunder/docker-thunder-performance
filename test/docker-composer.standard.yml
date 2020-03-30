@@ -15,13 +15,11 @@ services:
   chrome:
     image: 'selenium/standalone-chrome:3.141.59-oxygen'
   thunder-php:
-    image: 'travis-ci-test:latest'
+    image: 'burda/thunder-performance:drupal-8.8.3-standard'
     environment:
       DB_HOST: 'dbhost'
       CHROME_HOST: 'chrome'
       THUNDER_HOST: 'thunder-php'
-      PROFILE: 'standard'
-      THUNDER_TEST_GROUP: 'Standard'
       ELASTIC_APM_CONTEXT_TAG_BRANCH: 'travis-ci-test'
     ports:
       - '8080:8080'

@@ -52,7 +52,8 @@ RUN set -xe; \
 # Copy run scripts
 COPY scripts/docker/* /usr/local/bin/
 
-# Set executable
+# Set the scripts to be executable. Create a link to thunder-php-test as this is
+# name expected by
 RUN set -xe; \
     \
     chmod +x /usr/local/bin/drupal-php-install; \
@@ -65,7 +66,7 @@ RUN set -xe; \
     \
     chmod +x /usr/local/bin/install-elastic-apm; \
     \
-    ln -sfn /usr/local/bin/drupal-php-run /usr/local/bin/thunder-php-run;
+    ln -sfn /usr/local/bin/drupal-php-test /usr/local/bin/thunder-php-test;
 
 # Copy pre-build Thunder project to container
 COPY --chown=thunder:thunder www ${INSTALLATION_DIRECTORY}

@@ -43,9 +43,21 @@ not stored in the docker image. It is only used to compose the codebase.
 You should cleanup Thunder project before packaging it to docker image. You can do following steps:
 
 - remove all files form `sites/default/files` directory `rm --recursive --force docroot/sites/default/files/*`
-- remove `.git` directories `find . -type d -name ".git" | xargs rm --recursive --force` (build script will do this automatically)
 
-After that, you can use `build.sh` script to package that project into docker image
+After that, you can use `build.sh` script to package that project into docker image.
+The command has the following arguments:
+
+**--tag** : The tag to push to docker hub. For example "burda/thunder-performance:standard-efc8141449".
+
+**--project-path** : The directory to find the project to build.
+
+**--profile** : The install profile to use. For example, "thunder" or "standard",
+
+**--test-group** : The test group to run. For example, "standard" or "Thunder_Base_Set". 
+
+**--drupal-version** : For installs of core since 8.8.0 we need to know the Drupal version for composer to do be able to resolve the packages. 
+
+#### Example command
 
 `./build.sh --project-path <path to Thunder project> --tag <Docker image tag>`
 

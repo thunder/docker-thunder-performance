@@ -8,35 +8,7 @@ cp "${DOC_ROOT}"/sites/default/default.settings.php "${DOC_ROOT}"/sites/default/
 # Add write for settings.php
 chmod a+w "${DOC_ROOT}"/sites/default/settings.php
 
-# Adjust settings.php
-cat <<EOF >>"${DOC_ROOT}"/sites/default/settings.php
-
-if (!isset(\$databases)) {
-  \$databases = [];
-}
-
-\$databases['default']['default'] = [
-  'prefix' => '',
-];
-
-EOF
-
-HASH_SALT="$(openssl rand -hex 32)"
-{
-  echo -e "\$settings['config_sync_directory'] = '../config/sync';\n"
-  echo -e "\$settings['hash_salt'] = '${HASH_SALT}';\n\n"
-  echo -e "\$databases['default']['default']['host'] = '${DB_HOST}';\n"
-  echo -e "\$databases['default']['default']['port'] = '${DB_PORT}';\n"
-  echo -e "\$databases['default']['default']['database'] = '${DB_NAME}';\n"
-  echo -e "\$databases['default']['default']['username'] = '${DB_USER}';\n"
-  echo -e "\$databases['default']['default']['password'] = '${DB_PASS}';\n"
-  echo -e "\$databases['default']['default']['namespace'] = 'Drupal\\Core\\Database\\Driver\\${DB_DIVER}';\n"
-  echo -e "\$databases['default']['default']['driver'] = '${DB_DIVER}';\n"
-} >>"${DOC_ROOT}"/sites/default/settings.php
-
-# Remove write for settings.php
-chmod a-w "${DOC_ROOT}"/sites/default/settings.php
-
+DB_URL="${DB_DIVER}://${DB_USER}:${DB_PASS}@${DB_HOST}:${DB_PORT}/${DB_NAME}"
 # Tweak .env file for testing
 # .env file
 cp "${DOC_ROOT}"/core/.env.example "${DOC_ROOT}"/core/.env
@@ -46,7 +18,7 @@ cp "${DOC_ROOT}"/core/.env.example "${DOC_ROOT}"/core/.env
   echo "DRUPAL_TEST_WEBDRIVER_PORT=4444"
   echo "DRUPAL_TEST_WEBDRIVER_PATH_PREFIX=/wd/hub"
   echo "DRUPAL_TEST_BASE_URL=http://${THUNDER_HOST}:8080"
-  echo "DRUPAL_TEST_DB_URL=mysql://thunder@${DB_HOST}:3306/thunder"
+  echo "DRUPAL_TEST_DB_URL=${DB_URL}"
   echo "DRUPAL_TEST_WEBDRIVER_HOSTNAME=${CHROME_HOST}"
   echo "THUNDER_BRANCH=${ELASTIC_APM_CONTEXT_TAG_BRANCH}"
   echo "THUNDER_SITE_HOSTNAME=${THUNDER_HOST}"
@@ -70,7 +42,7 @@ done
 
 
 # Install Thunder site and required modules for building of test site
-drush --yes site:install "${PROFILE}" --account-name=admin --account-pass=admin
+drush --yes site:install "${PROFILE}" --account-name=admin --account-pass=admin --db-url="${DB_URL}"
 drush --yes pm:enable thunder_performance_measurement testsite_builder media_entity_generic
 drush cache:rebuild
 

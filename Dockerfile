@@ -23,7 +23,7 @@ RUN set -xe; \
     \
     apt-get update; \
     \
-    apt-get install --yes --no-install-recommends gnupg apt-transport-https netcat unzip; \
+    apt-get install --yes --no-install-recommends gnupg apt-transport-https netcat unzip mysql-client; \
     \
     curl --silent --show-error https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - ; \
     \
@@ -49,6 +49,20 @@ RUN set -xe; \
     \
     rm --recursive --force /var/lib/apt/lists/*;
 
+# Copy pre-build Thunder project to container
+COPY --chown=thunder:thunder www ${INSTALLATION_DIRECTORY}
+
+# Build codebase.
+RUN set -xe; \
+    \
+    su - thunder --command="cd ${INSTALLATION_DIRECTORY}; COMPOSER_MEMORY_LIMIT=-1 COMPOSER_AUTH='${COMPOSER_AUTH}' COMPOSER_ROOT_VERSION=${COMPOSER_ROOT_VERSION} composer install --no-dev"; \
+    \
+    su - thunder --command="cd ${INSTALLATION_DIRECTORY}; COMPOSER_MEMORY_LIMIT=-1 COMPOSER_AUTH='${COMPOSER_AUTH}' COMPOSER_ROOT_VERSION=${COMPOSER_ROOT_VERSION} composer require  drush/drush:^9 thunder/thunder_performance_measurement thunder/testsite_builder drupal/media_entity_generic drupal/console --update-no-dev"; \
+    \
+    echo -e "\nexport PATH=\"\$PATH:${INSTALLATION_DIRECTORY}/bin:${INSTALLATION_DIRECTORY}/vendor/bin\"\n" >> /home/thunder/.profile; \
+    \
+    su - thunder --command="composer clear-cache";
+
 # Copy run scripts
 COPY scripts/docker/* /usr/local/bin/
 
@@ -68,9 +82,6 @@ RUN set -xe; \
     \
     ln -sfn /usr/local/bin/drupal-php-test /usr/local/bin/thunder-php-test;
 
-# Copy pre-build Thunder project to container
-COPY --chown=thunder:thunder www ${INSTALLATION_DIRECTORY}
-
 # Set DOC_ROOT environment var
 ENV INSTALLATION_DIRECTORY=${INSTALLATION_DIRECTORY}
 RUN set -xe; \
@@ -78,17 +89,6 @@ RUN set -xe; \
     set-docroot; \
     \
     cat /home/thunder/.profile;
-
-# Build codebase.
-RUN set -xe; \
-    \
-    su - thunder --command="cd ${INSTALLATION_DIRECTORY}; COMPOSER_MEMORY_LIMIT=-1 COMPOSER_AUTH='${COMPOSER_AUTH}' COMPOSER_ROOT_VERSION=${COMPOSER_ROOT_VERSION} composer install --no-dev"; \
-    \
-    su - thunder --command="cd ${INSTALLATION_DIRECTORY}; COMPOSER_MEMORY_LIMIT=-1 COMPOSER_AUTH='${COMPOSER_AUTH}' COMPOSER_ROOT_VERSION=${COMPOSER_ROOT_VERSION} composer require  drush/drush:^9 thunder/thunder_performance_measurement thunder/testsite_builder drupal/media_entity_generic drupal/console --update-no-dev"; \
-    \
-    echo -e "\nexport PATH=\"\$PATH:${INSTALLATION_DIRECTORY}/bin:${INSTALLATION_DIRECTORY}/vendor/bin\"\n" >> /home/thunder/.profile; \
-    \
-    su - thunder --command="composer clear-cache";
 
 # Install Elastic APM - this is run as a shell script so we can install in the
 # doc root.

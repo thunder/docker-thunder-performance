@@ -15,7 +15,7 @@ services:
   chrome:
     image: 'selenium/standalone-chrome:3.141.59-oxygen'
   thunder-php:
-    image: 'burda/thunder-performance:drupal-8.8.3-standard'
+    image: 'travis-ci-test:latest'
     environment:
       DB_HOST: 'dbhost'
       CHROME_HOST: 'chrome'

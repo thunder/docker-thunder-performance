@@ -35,7 +35,7 @@ while [ -n "$1" ]; do
         --project-path)
             # Check if correct directory path is provided
             if [ ! -d "$2" ]; then
-                echo "Provided directory path is not correct."
+                echo "Provided project path is not a directory."
 
                 exit 1
             fi
@@ -56,6 +56,12 @@ while [ -n "$1" ]; do
 
             shift
             ;;
+        --drupal-version)
+            COMPOSER_ROOT_VERSION="$2"
+
+            shift
+            ;;
+
 
         *) echo "Option $1 not recognized." ;;
     esac
@@ -84,4 +90,4 @@ else
 fi
 
 # Build docker image
-docker build --build-arg COMPOSER_AUTH="${COMPOSER_AUTH}" --build-arg PROFILE="${PROFILE}" --build-arg THUNDER_TEST_GROUP="${THUNDER_TEST_GROUP}" "${SCRIPT_DIRECTORY}" --tag "${TAG_NAME}"
+docker build --build-arg COMPOSER_AUTH="${COMPOSER_AUTH}" --build-arg PROFILE="${PROFILE}" --build-arg COMPOSER_ROOT_VERSION="${COMPOSER_ROOT_VERSION}" --build-arg THUNDER_TEST_GROUP="${THUNDER_TEST_GROUP}" "${SCRIPT_DIRECTORY}" --tag "${TAG_NAME}"

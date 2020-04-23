@@ -6,7 +6,7 @@
 pip install --user awscli
 
 # Get latest successful Thunder 8.x-3.x build
-THUNDER_LATEST_BUILD_ID=$(curl --request GET 'https://api.travis-ci.com/v3/repo/thunder%2Fthunder-distribution/builds?branch.name=feature/2899254-integrate_editorial_search_with_search_api_4_x&build.state=passed&build.event_type=cron,push&limit=1' --header 'Content-Type: application/json' --silent | jq --raw-output '.builds[0].id')
+THUNDER_LATEST_BUILD_ID=$(curl --request GET 'https://api.travis-ci.com/v3/repo/thunder%2Fthunder-distribution/builds?branch.name=8.x-3.x&build.state=passed&build.event_type=cron,push&limit=1' --header 'Content-Type: application/json' --silent | jq --raw-output '.builds[0].id')
 
 # Thunder project artifact file name
 THUNDER_PROJECT_ARTIFACT_FILE="${THUNDER_LATEST_BUILD_ID}-thunder.tar.gz"

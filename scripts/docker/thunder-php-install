@@ -75,7 +75,7 @@ curl --silent --output /home/thunder/www/docroot/thunder_test_site_template.json
 drush cache:rebuild
 
 # Build search_api index
-drush search-api:reset-tracker
+drush search-api:rebuild-tracker
 drush search-api:index t1_node_bundle_0
 
 # Warm-up thunder_performance_measurement site info endpoint cache

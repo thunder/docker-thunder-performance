@@ -60,8 +60,8 @@ while drush --quiet sql:query "SELECT 1 FROM DUAL;"; do
 done
 
 # Install Thunder site and required modules for building of test site
-drush --yes site:install thunder --debug
-drush --yes pm:enable thunder_performance_measurement testsite_builder media_entity_generic thunder_search_api --debug
+drush --yes site:install thunder
+drush --yes pm:enable thunder_testing_demo thunder_performance_measurement testsite_builder media_entity_generic thunder_search_api
 drush cache:rebuild
 
 # Prepare Database for testsite_builder content creator
@@ -79,4 +79,4 @@ drush search-api:rebuild-tracker
 drush search-api:index t1_node_bundle_0
 
 # Warm-up thunder_performance_measurement site info endpoint cache
-time drush php:eval 'Drupal\thunder_performance_measurement\Controller\SiteInfoController::create(Drupal::getContainer())->siteInfo(Symfony\Component\HttpFoundation\Request::createFromGlobals());' --debug
+time drush php:eval 'Drupal\thunder_performance_measurement\Controller\SiteInfoController::create(Drupal::getContainer())->siteInfo(Symfony\Component\HttpFoundation\Request::createFromGlobals());'

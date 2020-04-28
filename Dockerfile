@@ -4,9 +4,7 @@ FROM burda/thunder-php:latest
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 ARG NVM_VERSION="v0.34.0"
-ARG COMPOSER_ROOT_VERSION="8.8.3"
 ARG INSTALLATION_DIRECTORY="/home/thunder/www"
-ARG COMPOSER_AUTH
 ARG THUNDER_TEST_GROUP="Thunder_Base_Set"
 ARG PROFILE="thunder"
 
@@ -49,26 +47,18 @@ RUN set -xe; \
     \
     rm --recursive --force /var/lib/apt/lists/*;
 
-# Copy pre-build Thunder project to container
+# Copy code to container
 COPY --chown=thunder:thunder www ${INSTALLATION_DIRECTORY}
-
-# Build codebase.
-RUN set -xe; \
-    \
-    su - thunder --command="cd ${INSTALLATION_DIRECTORY}; COMPOSER_MEMORY_LIMIT=-1 COMPOSER_AUTH='${COMPOSER_AUTH}' COMPOSER_ROOT_VERSION=${COMPOSER_ROOT_VERSION} composer install --no-dev"; \
-    \
-    su - thunder --command="cd ${INSTALLATION_DIRECTORY}; COMPOSER_MEMORY_LIMIT=-1 COMPOSER_AUTH='${COMPOSER_AUTH}' COMPOSER_ROOT_VERSION=${COMPOSER_ROOT_VERSION} composer require  drush/drush:^9 thunder/thunder_performance_measurement thunder/testsite_builder drupal/media_entity_generic drupal/console --update-no-dev"; \
-    \
-    echo -e "\nexport PATH=\"\$PATH:${INSTALLATION_DIRECTORY}/bin:${INSTALLATION_DIRECTORY}/vendor/bin\"\n" >> /home/thunder/.profile; \
-    \
-    su - thunder --command="composer clear-cache";
 
 # Copy run scripts
 COPY scripts/docker/* /usr/local/bin/
 
 # Set the scripts to be executable. Create a link to thunder-php-test as this is
-# name expected by
+# name expected by the runner.
+ENV INSTALLATION_DIRECTORY=${INSTALLATION_DIRECTORY}
 RUN set -xe; \
+    \
+    echo -e "\nexport PATH=\"\$PATH:${INSTALLATION_DIRECTORY}/bin:${INSTALLATION_DIRECTORY}/vendor/bin\"\n" >> /home/thunder/.profile; \
     \
     chmod +x /usr/local/bin/drupal-php-install; \
     \
@@ -80,11 +70,7 @@ RUN set -xe; \
     \
     chmod +x /usr/local/bin/install-elastic-apm; \
     \
-    ln -sfn /usr/local/bin/drupal-php-test /usr/local/bin/thunder-php-test;
-
-# Set DOC_ROOT environment var
-ENV INSTALLATION_DIRECTORY=${INSTALLATION_DIRECTORY}
-RUN set -xe; \
+    ln -sfn /usr/local/bin/drupal-php-test /usr/local/bin/thunder-php-test; \
     \
     set-docroot; \
     \

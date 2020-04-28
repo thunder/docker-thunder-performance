@@ -56,12 +56,6 @@ while [ -n "$1" ]; do
 
             shift
             ;;
-        --drupal-version)
-            COMPOSER_ROOT_VERSION="$2"
-
-            shift
-            ;;
-
 
         *) echo "Option $1 not recognized." ;;
     esac
@@ -82,6 +76,11 @@ if [[ "${PROJECT_PATH}" != "" ]]; then
     fi
 fi
 
+# Compose project to ensure dependencies are correct.
+composer install -d "${SCRIPT_DIRECTORY}/www"
+composer require --update-no-dev -d "${SCRIPT_DIRECTORY}/www" drush/drush:^9 thunder/thunder_performance_measurement thunder/testsite_builder drupal/media_entity_generic drupal/console
+composer install --no-dev -d "${SCRIPT_DIRECTORY}/www"
+
 # CleanUp project
 if [[ "${OS_NAME}" == "osx" ]]; then
   find "${SCRIPT_DIRECTORY}/www" -type d -name ".git" -print0 | xargs -0 rm -rf
@@ -90,4 +89,4 @@ else
 fi
 
 # Build docker image
-docker build --build-arg COMPOSER_AUTH="${COMPOSER_AUTH}" --build-arg PROFILE="${PROFILE}" --build-arg COMPOSER_ROOT_VERSION="${COMPOSER_ROOT_VERSION}" --build-arg THUNDER_TEST_GROUP="${THUNDER_TEST_GROUP}" "${SCRIPT_DIRECTORY}" --tag "${TAG_NAME}"
+docker build --build-arg PROFILE="${PROFILE}" --build-arg THUNDER_TEST_GROUP="${THUNDER_TEST_GROUP}" "${SCRIPT_DIRECTORY}" --tag "${TAG_NAME}"

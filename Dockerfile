@@ -1,5 +1,5 @@
 # hadolint ignore=DL3007
-FROM burda/thunder-php:latest
+FROM php:7.3-apache-stretch
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
@@ -8,12 +8,64 @@ ARG INSTALLATION_DIRECTORY="/home/thunder/www"
 ARG THUNDER_TEST_GROUP="Thunder_Base_Set"
 ARG PROFILE="thunder"
 
-# Create required user
+# Install required libraries and packages for running Drupal.
+RUN set -xe; \
+    \
+    apt-get update; \
+    \
+    apt-get install -y --no-install-recommends \
+        git \
+        libfreetype6-dev \
+        libjpeg-dev \
+        libpng-dev \
+        libpq-dev \
+        libzip-dev \
+        sudo \
+    ; \
+    \
+    docker-php-ext-configure gd \
+        --with-gd \
+        --with-freetype-dir=/usr \
+        --with-jpeg-dir=/usr \
+        --with-png-dir=/usr \
+    ; \
+    \
+    docker-php-ext-install \
+        gd \
+        opcache \
+        pcntl \
+        pdo_mysql \
+        pdo_pgsql \
+        zip \
+    ; \
+    \
+    apt list --installed | grep -o '.*-dev' | xargs apt-get purge -y; \
+    \
+    apt-get clean; \
+    \
+    rm -rf /var/lib/apt/lists/*; \
+    \
+    /usr/sbin/a2enmod rewrite;
+
+# Setup PHP Cli OpCache
+RUN { \
+        echo 'opcache.enable=1'; \
+        echo 'opcache.enable_cli=1'; \
+		echo 'opcache.memory_consumption=128'; \
+		echo 'opcache.interned_strings_buffer=8'; \
+		echo 'opcache.max_accelerated_files=10000'; \
+		echo 'opcache.validate_timestamps=0'; \
+		echo 'opcache.fast_shutdown=1'; \
+	} >> /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini;
+
+# Create required user - add to sudoers so that the thunder user can run Apache.
 RUN set -xe; \
     \
     adduser --gecos "" --disabled-password thunder; \
     \
-    usermod --append --groups sudo thunder;
+    usermod --append --groups sudo thunder; \
+    \
+    echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers ;
 
 # Install required libraries and packages
 # hadolint ignore=DL3008
@@ -49,6 +101,9 @@ RUN set -xe; \
 
 # Copy code to container
 COPY --chown=thunder:thunder www ${INSTALLATION_DIRECTORY}
+
+# Unfortunately this doesn't quite work as expected.
+# ENV APACHE_RUN_USER=thunder
 
 # Copy run scripts
 COPY scripts/docker/* /usr/local/bin/
@@ -109,5 +164,5 @@ ENV PROFILE=${PROFILE}
 ENV ELASTIC_APM_URL="http://127.0.0.1:8200"
 ENV ELASTIC_APM_CONTEXT_TAG_BRANCH="master"
 
-EXPOSE 8080/tcp
+EXPOSE 80/tcp
 CMD ["bash", "-x", "drupal-php-run"]

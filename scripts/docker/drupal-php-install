@@ -13,11 +13,11 @@ DB_URL="${DB_DIVER}://${DB_USER}:${DB_PASS}@${DB_HOST}:${DB_PORT}/${DB_NAME}"
 # .env file
 cp "${DOC_ROOT}"/core/.env.example "${DOC_ROOT}"/core/.env
 {
-  echo "DRUPAL_TEST_WEBDRIVER_CHROME_ARGS=\\\`--disable-gpu --headless --no-sandbox --disable-web-security\\\`"
+  echo "DRUPAL_TEST_WEBDRIVER_CHROME_ARGS='--disable-gpu --headless --no-sandbox --disable-web-security'"
   echo "DRUPAL_TEST_CHROMEDRIVER_AUTOSTART=false"
   echo "DRUPAL_TEST_WEBDRIVER_PORT=4444"
   echo "DRUPAL_TEST_WEBDRIVER_PATH_PREFIX=/wd/hub"
-  echo "DRUPAL_TEST_BASE_URL=http://${THUNDER_HOST}:8080"
+  echo "DRUPAL_TEST_BASE_URL=http://${THUNDER_HOST}"
   echo "DRUPAL_TEST_DB_URL=${DB_URL}"
   echo "DRUPAL_TEST_WEBDRIVER_HOSTNAME=${CHROME_HOST}"
   echo "THUNDER_BRANCH=${ELASTIC_APM_CONTEXT_TAG_BRANCH}"
@@ -45,6 +45,9 @@ done
 drush --yes site:install "${PROFILE}" --account-name=admin --account-pass=admin --db-url="${DB_URL}"
 drush --yes pm:enable thunder_performance_measurement testsite_builder media_entity_generic
 drush cache:rebuild
+
+# Allow Apache to write to the files directory.
+chmod 777 "${DOC_ROOT}"/sites/default/files
 
 # Prepare Database for testsite_builder content creator
 # shellcheck disable=SC2016

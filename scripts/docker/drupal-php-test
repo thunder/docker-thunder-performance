@@ -1,22 +1,10 @@
 #!/usr/bin/env bash
 #
 # Server and run Nightwatch JS Tests
-
-cd "${DOC_ROOT}" || exit 1
-
-echo "Serving on: 0.0.0.0:8080 ..."
-php --server 0.0.0.0:8080 .ht.router.php &
-
-STATUS=$?
-echo "Server started with status: ${STATUS}"
-if [ "${STATUS}" != "0" ]; then
-    echo "Failed to start '.ht.router.php': ${STATUS}"
-
-    exit $STATUS
-fi
+sudo apache2-foreground &
 
 echo "Wait for Drupal to be ready..."
-while ! curl --output /dev/null --silent --head --fail "http://localhost:8080"; do
+while ! curl --output /dev/null --silent --head --fail "http://${THUNDER_HOST}"; do
     sleep 1
 done
 

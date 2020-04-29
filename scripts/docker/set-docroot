@@ -19,3 +19,7 @@ echo "Setting DOC_ROOT to $(pwd)"
     echo -e "export DOC_ROOT=\"$(pwd)\"\n";
     echo -e "\n";
 } >> /home/thunder/.profile;
+
+# Link code to the location expected by Apache.
+rm -rf /var/www/html
+ln -sfn $(pwd) /var/www/html

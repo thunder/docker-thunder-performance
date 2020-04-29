@@ -76,10 +76,12 @@ if [[ "${PROJECT_PATH}" != "" ]]; then
     fi
 fi
 
-# Compose project to ensure dependencies are correct.
-composer install -d "${SCRIPT_DIRECTORY}/www"
-composer require --update-no-dev -d "${SCRIPT_DIRECTORY}/www" drush/drush:^9 thunder/thunder_performance_measurement thunder/testsite_builder drupal/media_entity_generic drupal/console
-composer install --no-dev -d "${SCRIPT_DIRECTORY}/www"
+if [ -x "$(command -v composer)" ]; then
+  # Compose project to ensure dependencies are correct.
+  composer install -d "${SCRIPT_DIRECTORY}/www"
+  composer require --update-no-dev -d "${SCRIPT_DIRECTORY}/www" drush/drush:^9 thunder/thunder_performance_measurement thunder/testsite_builder drupal/media_entity_generic drupal/console
+  composer install --no-dev -d "${SCRIPT_DIRECTORY}/www"
+fi;
 
 # CleanUp project
 if [[ "${OS_NAME}" == "osx" ]]; then

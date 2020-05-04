@@ -44,6 +44,8 @@ done
 # Install Thunder site and required modules for building of test site
 drush --yes site:install "${PROFILE}" --account-name=admin --account-pass=admin --db-url="${DB_URL}"
 drush --yes pm:enable thunder_performance_measurement testsite_builder media_entity_generic
+# Remove modules that can affect performance test based on time.
+drush --yes pm:uninstall automated_cron update
 drush cache:rebuild
 
 # Allow Apache to write to the files directory.

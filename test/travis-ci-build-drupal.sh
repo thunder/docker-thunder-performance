@@ -7,4 +7,4 @@
 git clone --branch "${BRANCH}" --depth=1 https://git.drupalcode.org/project/drupal.git "/tmp/drupal"
 
 # Build image with tag
-bash -x ./build.sh --tag "travis-ci-test" --profile standard --test-group standard --project-path "/tmp/drupal"
+bash -x ./build.sh --tag "travis-ci-test" --profile "${PROFILE}" --test-group "${PROFILE}" --project-path "/tmp/drupal"

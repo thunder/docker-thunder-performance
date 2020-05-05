@@ -29,17 +29,18 @@ TEST_THUNDER_PHP_DOCKER_ID=$(docker ps --format 'table {{.Names}}' | grep 'thund
 
 if [ "${PROFILE}" == "thunder" ]; then
   # Check that relevant modules are installed
-  docker exec "${TEST_THUNDER_PHP_DOCKER_ID}" su - thunder --command='cd /home/thunder/www/docroot; drush pm:list --status=enabled --format=json;' | jq --exit-status '.thunder_performance_measurement, .media_entity_generic'
+  docker exec "${TEST_THUNDER_PHP_DOCKER_ID}" su - thunder --command='cd {$DOC_ROOT}; drush pm:list --status=enabled --format=json;' | jq --exit-status '.thunder_performance_measurement, .media_entity_generic'
 
   # Workaround for testsite_builder module name until Drush is fixed
   # TODO: Move check back to "drush pm:list" command when Drush issue is fixed (https://github.com/drush-ops/drush/issues/4182)
-  docker exec "${TEST_THUNDER_PHP_DOCKER_ID}" su - thunder --command='cd /home/thunder/www/docroot; /home/thunder/www/vendor/drupal/console/bin/drupal debug:module --status=enabled;' | grep --silent "testsite_builder"
+  docker exec "${TEST_THUNDER_PHP_DOCKER_ID}" su - thunder --command='cd {$DOC_ROOT}; /home/thunder/www/vendor/drupal/console/bin/drupal debug:module --status=enabled;' | grep --silent "testsite_builder"
 
   # Check that test site template is fetched
-  docker exec "${TEST_THUNDER_PHP_DOCKER_ID}" su - thunder --command='ls /home/thunder/www/docroot/thunder_test_site_template.json;'
+  docker exec "${TEST_THUNDER_PHP_DOCKER_ID}" su - thunder --command='ls {$DOC_ROOT}/thunder_test_site_template.json;'
 fi
+
 # Check that required Node.JS package is installed for Elastic APM
-docker exec "${TEST_THUNDER_PHP_DOCKER_ID}" su - thunder --command='cd /home/thunder/www/docroot/core/node_modules/elastic-apm-node;'
+docker exec "${TEST_THUNDER_PHP_DOCKER_ID}" su - thunder --command='cd {$DOC_ROOT}/core/node_modules/elastic-apm-node;'
 
 # Check that envirovment variables are set for thunder user
 docker exec "${TEST_THUNDER_PHP_DOCKER_ID}" su - thunder --command='[ "${THUNDER_HOST}" == "thunder-php" ] && [ "${CHROME_HOST}" == "chrome" ] && echo "All Good!" || exit 1'

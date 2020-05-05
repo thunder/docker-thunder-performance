@@ -1,5 +1,11 @@
-language: bash
+language: php
 services: docker
+php: 7.3
+
+cache:
+  apt: true
+  directories:
+    - "$HOME/.composer/cache"
 
 branches:
   only:

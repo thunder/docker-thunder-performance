@@ -55,8 +55,6 @@ The command has the following arguments:
 
 **--test-group** : The test group to run. For example, "standard" or "Thunder_Base_Set". 
 
-**--drupal-version** : For installs of core since 8.8.0 we need to know the Drupal version for composer to do be able to resolve the packages. 
-
 #### Example command
 
 `./build.sh --project-path <path to Thunder project> --tag <Docker image tag>`

@@ -22,4 +22,4 @@ echo "Setting DOC_ROOT to $(pwd)"
 
 # Link code to the location expected by Apache.
 rm -rf /var/www/html
-ln -sfn $(pwd) /var/www/html
+ln -sfn "$(pwd)" /var/www/html

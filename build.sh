@@ -90,6 +90,7 @@ else
 fi
 composer install --no-dev -d "${SCRIPT_DIRECTORY}/www"
 
+# Remove all git info for smaller docker images.
 if [ "${OS_NAME}" == "osx" ]; then
   find "${SCRIPT_DIRECTORY}/www" -type d -name ".git" -print0 | xargs -0 rm -rf
 else

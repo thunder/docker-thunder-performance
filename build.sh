@@ -66,25 +66,37 @@ done
 SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 # Copy Thunder project to Dockerfile context if project path is provided
-if [[ "${PROJECT_PATH}" != "" ]]; then
-    if [[ "${OS_NAME}" == "osx" ]]; then
-        rm -rf "${SCRIPT_DIRECTORY}/www"
-        cp -R "${PROJECT_PATH}" "${SCRIPT_DIRECTORY}/www"
-    else
-        rm --recursive --force  "${SCRIPT_DIRECTORY}/www"
-        cp --dereference --recursive "${PROJECT_PATH}" "${SCRIPT_DIRECTORY}/www"
-    fi
+if [ "${PROJECT_PATH}" != "" ]; then
+  if [ "${OS_NAME}" == "osx" ]; then
+      rm -rf "${SCRIPT_DIRECTORY}/www"
+      cp -R "${PROJECT_PATH}" "${SCRIPT_DIRECTORY}/www"
+  else
+      rm --recursive --force  "${SCRIPT_DIRECTORY}/www"
+      cp --dereference --recursive "${PROJECT_PATH}" "${SCRIPT_DIRECTORY}/www"
+  fi
+
+  # Compose project to ensure dependencies are correct.
+  cd "${SCRIPT_DIRECTORY}/www"
+  composer install
+  composer require drush/drush:^9 thunder/thunder_performance_measurement thunder/testsite_builder drupal/media_entity_generic drupal/console
+  cd "${SCRIPT_DIRECTORY}"
 fi
 
-if [ -x "$(command -v composer)" ]; then
-  # Compose project to ensure dependencies are correct.
-  composer install -d "${SCRIPT_DIRECTORY}/www"
-  composer require --update-no-dev -d "${SCRIPT_DIRECTORY}/www" drush/drush:^9 thunder/thunder_performance_measurement thunder/testsite_builder drupal/media_entity_generic drupal/console
-  composer install --no-dev -d "${SCRIPT_DIRECTORY}/www"
-fi;
-
 # CleanUp project
-if [[ "${OS_NAME}" == "osx" ]]; then
+# Coder has uncommitted changes due to Drupal's cleaner removing tests.
+if [ "${OS_NAME}" == "osx" ]; then
+  rm -rf "${SCRIPT_DIRECTORY}/www/vendor/drupal/coder"
+else
+  rm --recursive --force "${SCRIPT_DIRECTORY}/www/vendor/drupal/coder"
+fi
+
+# Note: do not use -d on composer as it can end up reverting changes.
+cd "${SCRIPT_DIRECTORY}/www"
+composer install --no-dev
+cd "${SCRIPT_DIRECTORY}"
+
+# Remove all git info for smaller docker images.
+if [ "${OS_NAME}" == "osx" ]; then
   find "${SCRIPT_DIRECTORY}/www" -type d -name ".git" -print0 | xargs -0 rm -rf
 else
   find "${SCRIPT_DIRECTORY}/www" -type d -name ".git" -print0 | xargs -0 rm --recursive --force

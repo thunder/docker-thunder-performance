@@ -2,6 +2,11 @@
 #
 # Install Drupal Standard install profile
 
+# If a settings.php exists allow it to be overwritten with the defaults.
+if [ -f "${DOC_ROOT}/sites/default/settings.php" ]; then
+  chmod a+w "${DOC_ROOT}"/sites/default/settings.php
+fi
+
 # Create a settings.php
 cp "${DOC_ROOT}"/sites/default/default.settings.php "${DOC_ROOT}"/sites/default/settings.php
 

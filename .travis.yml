@@ -1,5 +1,11 @@
-language: bash
+language: php
 services: docker
+php: 7.3
+
+cache:
+  apt: true
+  directories:
+    - "$HOME/.composer/cache"
 
 branches:
   only:
@@ -7,15 +13,15 @@ branches:
 
 env:
   matrix:
-    - PROFILE="standard"
-    - PROFILE="thunder"
+    - PROFILE="standard" BRANCH="8.9.x" INSTALL="drupal" COMPOSER_MEMORY_LIMIT="2G"
+    - PROFILE="thunder" INSTALL="thunder"
 
 before_install:
   - shellcheck scripts/docker/* test/*.sh
 
 install:
-  - bash -x -e ./test/travis-ci-build.sh
+  - bash -x -e ./test/travis-ci-build-${INSTALL}.sh
 
 script:
-  - docker-compose --file "${TRAVIS_BUILD_DIR}/test/docker-composer.${PROFILE}.yml" --project-name test up &
+  - docker-compose --file "${TRAVIS_BUILD_DIR}/test/docker-composer.travis-ci.yml" --project-name test up &
   - bash -x -e ./test/travis-ci-run.sh

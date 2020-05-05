@@ -22,7 +22,7 @@ until curl --output /dev/null --silent --head --fail "http://localhost:8080/"; d
 done
 
 # Check that Thunder is running correctly
-curl --silent "http://localhost:8080/" | grep --ignore-case --silent "meta.*generator.*${install}"
+curl --silent "http://localhost:8080/" | grep --ignore-case --silent "meta.*generator.*${INSTALL}"
 
 # Docker ID of Thunder PHP container
 TEST_THUNDER_PHP_DOCKER_ID=$(docker ps --format 'table {{.Names}}' | grep 'thunder-php')

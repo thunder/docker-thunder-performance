@@ -60,7 +60,7 @@ while drush --quiet sql:query "SELECT 1 FROM DUAL;"; do
 done
 
 # Install Thunder site and required modules for building of test site
-drush --yes site:install thunder
+drush --yes site:install thunder thunder_module_configure_form.install_modules_thunder_demo=NULL
 drush --yes pm:enable thunder_testing_demo thunder_performance_measurement testsite_builder media_entity_generic thunder_search_api
 drush cache:rebuild
 

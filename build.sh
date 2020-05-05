@@ -67,30 +67,29 @@ SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pw
 
 # Copy Thunder project to Dockerfile context if project path is provided
 if [[ "${PROJECT_PATH}" != "" ]]; then
-    if [[ "${OS_NAME}" == "osx" ]]; then
-        rm -rf "${SCRIPT_DIRECTORY}/www"
-        cp -R "${PROJECT_PATH}" "${SCRIPT_DIRECTORY}/www"
-    else
-        rm --recursive --force  "${SCRIPT_DIRECTORY}/www"
-        cp --dereference --recursive "${PROJECT_PATH}" "${SCRIPT_DIRECTORY}/www"
-    fi
-fi
+  if [[ "${OS_NAME}" == "osx" ]]; then
+      rm -rf "${SCRIPT_DIRECTORY}/www"
+      cp -R "${PROJECT_PATH}" "${SCRIPT_DIRECTORY}/www"
+  else
+      rm --recursive --force  "${SCRIPT_DIRECTORY}/www"
+      cp --dereference --recursive "${PROJECT_PATH}" "${SCRIPT_DIRECTORY}/www"
+  fi
 
-if [ -x "$(command -v composer)" ]; then
   # Compose project to ensure dependencies are correct.
   composer install -d "${SCRIPT_DIRECTORY}/www"
   composer require -d "${SCRIPT_DIRECTORY}/www" drush/drush:^9 thunder/thunder_performance_measurement thunder/testsite_builder drupal/media_entity_generic drupal/console
-  # Coder has uncommitted changes due to Drupal's cleaner removing tests.
-  if [[ "${OS_NAME}" == "osx" ]]; then
-    rm -rf "${SCRIPT_DIRECTORY}/www/vendor/drupal/coder"
-  else
-    rm --recursive --force "${SCRIPT_DIRECTORY}/www/vendor/drupal/coder"
-  fi
 
-  composer install --no-dev -d "${SCRIPT_DIRECTORY}/www"
-fi;
+fi
 
 # CleanUp project
+# Coder has uncommitted changes due to Drupal's cleaner removing tests.
+if [[ "${OS_NAME}" == "osx" ]]; then
+  rm -rf "${SCRIPT_DIRECTORY}/www/vendor/drupal/coder"
+else
+  rm --recursive --force "${SCRIPT_DIRECTORY}/www/vendor/drupal/coder"
+fi
+composer install --no-dev -d "${SCRIPT_DIRECTORY}/www"
+
 if [[ "${OS_NAME}" == "osx" ]]; then
   find "${SCRIPT_DIRECTORY}/www" -type d -name ".git" -print0 | xargs -0 rm -rf
 else

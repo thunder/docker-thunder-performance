@@ -2,10 +2,13 @@
 #
 # Install Drupal Standard install profile
 
-# Create a settings.php
-if [ ! -f "${DOC_ROOT}/sites/default/settings.php" ]; then
-  cp "${DOC_ROOT}"/sites/default/default.settings.php "${DOC_ROOT}"/sites/default/settings.php
+if [ -f "${DOC_ROOT}/sites/default/settings.php" ]; then
+  chmod a+w "${DOC_ROOT}"/sites/default/settings.php
+  rm "${DOC_ROOT}"/sites/default/settings.php
 fi
+
+# Create a settings.php
+cp "${DOC_ROOT}"/sites/default/default.settings.php "${DOC_ROOT}"/sites/default/settings.php
 
 # Add write for settings.php
 chmod a+w "${DOC_ROOT}"/sites/default/settings.php

@@ -66,8 +66,8 @@ done
 SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 # Copy Thunder project to Dockerfile context if project path is provided
-if [[ "${PROJECT_PATH}" != "" ]]; then
-  if [[ "${OS_NAME}" == "osx" ]]; then
+if [ "${PROJECT_PATH}" != "" ]; then
+  if [ "${OS_NAME}" == "osx" ]; then
       rm -rf "${SCRIPT_DIRECTORY}/www"
       cp -R "${PROJECT_PATH}" "${SCRIPT_DIRECTORY}/www"
   else
@@ -83,14 +83,14 @@ fi
 
 # CleanUp project
 # Coder has uncommitted changes due to Drupal's cleaner removing tests.
-if [[ "${OS_NAME}" == "osx" ]]; then
+if [ "${OS_NAME}" == "osx" ]; then
   rm -rf "${SCRIPT_DIRECTORY}/www/vendor/drupal/coder"
 else
   rm --recursive --force "${SCRIPT_DIRECTORY}/www/vendor/drupal/coder"
 fi
 composer install --no-dev -d "${SCRIPT_DIRECTORY}/www"
 
-if [[ "${OS_NAME}" == "osx" ]]; then
+if [ "${OS_NAME}" == "osx" ]; then
   find "${SCRIPT_DIRECTORY}/www" -type d -name ".git" -print0 | xargs -0 rm -rf
 else
   find "${SCRIPT_DIRECTORY}/www" -type d -name ".git" -print0 | xargs -0 rm --recursive --force

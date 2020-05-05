@@ -13,15 +13,15 @@ branches:
 
 env:
   matrix:
-    - PROFILE="standard"
-    - PROFILE="thunder"
+    - PROFILE="standard" BRANCH="8.9.x" INSTALL="drupal"
+    - PROFILE="thunder" INSTALL="thunder"
 
 before_install:
   - shellcheck scripts/docker/* test/*.sh
 
 install:
-  - bash -x -e ./test/travis-ci-build-${PROFILE}.sh
+  - bash -x -e ./test/travis-ci-build-${INSTALL}.sh
 
 script:
-  - docker-compose --file "${TRAVIS_BUILD_DIR}/test/docker-composer.${PROFILE}.yml" --project-name test up &
+  - docker-compose --file "${TRAVIS_BUILD_DIR}/test/docker-composer.${INSTALL}.yml" --project-name test up &
   - bash -x -e ./test/travis-ci-run.sh

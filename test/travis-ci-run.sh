@@ -37,6 +37,12 @@ if [ "${PROFILE}" == "thunder" ]; then
 
   # Check that test site template is fetched
   docker exec "${TEST_THUNDER_PHP_DOCKER_ID}" su - thunder --command='ls "${DOC_ROOT}"/thunder_test_site_template.json;'
+
+  # Check the THUNDER_TEST_GROUP envirovment variable is set for thunder user
+  docker exec "${TEST_THUNDER_PHP_DOCKER_ID}" su - thunder --command='[ "${THUNDER_TEST_GROUP}" == "Thunder_Base_Set" ] && echo "All Good!" || exit 1'
+else
+  # Check the THUNDER_TEST_GROUP envirovment variable is set for thunder user
+  docker exec "${TEST_THUNDER_PHP_DOCKER_ID}" su - thunder --command='[ "${THUNDER_TEST_GROUP}" == "${PROFILE}" ] && echo "All Good!" || exit 1'
 fi
 
 # Check that required Node.JS package is installed for Elastic APM
@@ -46,4 +52,3 @@ docker exec "${TEST_THUNDER_PHP_DOCKER_ID}" su - thunder --command='cd "${DOC_RO
 docker exec "${TEST_THUNDER_PHP_DOCKER_ID}" su - thunder --command='[ "${THUNDER_HOST}" == "thunder-php" ] && [ "${CHROME_HOST}" == "chrome" ] && echo "All Good!" || exit 1'
 docker exec "${TEST_THUNDER_PHP_DOCKER_ID}" su - thunder --command='[ "${ELASTIC_APM_URL}" == "http://127.0.0.1:8200" ] && [ "${ELASTIC_APM_CONTEXT_TAG_BRANCH}" == "travis-ci-test" ] && echo "All Good!" || exit 1'
 docker exec "${TEST_THUNDER_PHP_DOCKER_ID}" su - thunder --command='[ "${THUNDER_TEST_SITE_TEMPLATE}" == "https://raw.githubusercontent.com/thunder/thunder-performance-site-templates/master/thunder_base_set.json" ] && echo "All Good!" || exit 1'
-docker exec "${TEST_THUNDER_PHP_DOCKER_ID}" su - thunder --command='[ "${THUNDER_TEST_GROUP}" == "Thunder_Base_Set" ] && echo "All Good!" || exit 1'

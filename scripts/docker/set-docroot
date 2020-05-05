@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+# Drupal core's docroot.
+cd "${INSTALLATION_DIRECTORY}" || exit 1
+
+# Thunder's docroot
+# shellcheck disable=SC2164
+[ -d "docroot" ] && cd docroot
+
+# Core recommended's docroot
+# shellcheck disable=SC2164
+[ -d "web" ] && cd web
+
+# Set up DOC_ROOT environment variable.
+echo "Setting DOC_ROOT to $(pwd)"
+
+{
+    echo -e "\n";
+    echo -e "export DOC_ROOT=\"$(pwd)\"\n";
+    echo -e "\n";
+} >> /home/thunder/.profile;

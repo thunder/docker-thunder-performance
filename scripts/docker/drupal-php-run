@@ -13,6 +13,10 @@
     echo -e "export DB_DIVER=\"$DB_DIVER\"\n";
 
     echo -e "\n";
+    echo -e "export PROFILE=\"$PROFILE\"\n";
+    echo -e "export INSTALLATION_DIRECTORY=\"$INSTALLATION_DIRECTORY\"\n";
+
+    echo -e "\n";
     echo -e "export THUNDER_HOST=\"$THUNDER_HOST\"\n";
     echo -e "export CHROME_HOST=\"$CHROME_HOST\"\n";
     echo -e "export THUNDER_TEST_SITE_TEMPLATE=\"$THUNDER_TEST_SITE_TEMPLATE\"\n";
@@ -24,4 +28,4 @@
 } >> /home/thunder/.profile;
 
 # Build, install and serve Thunder
-su - thunder --command="bash -x thunder-php-install && bash -x thunder-php-test"
+su - thunder --command="bash -x drupal-php-install && bash -x drupal-php-test"

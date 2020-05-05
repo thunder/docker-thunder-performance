@@ -30,16 +30,32 @@ The container will require some time to install Thunder and after that it will s
 - `ELASTIC_APM_CONTEXT_TAG_BRANCH` - Elastic APM requires branch information to group results
 
 ## How to build image
+In order to not hit github rate limits the env var COMPOSER_AUTH should be set.
+For example:
+- `COMPOSER_AUTH='{"github-oauth": {"github.com": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"}}'`
+
+See [Managing Composer Github access with Personal Access Tokens](https://www.previousnext.com.au/blog/managing-composer-github-access-personal-access-tokens)
+for more information about how to obtain a token from github. Note the token is
+not stored in the docker image. It is only used to compose the codebase.
 
 ### Prepare Thunder project for Docker image
 
 You should cleanup Thunder project before packaging it to docker image. You can do following steps:
 
-- remove dev dependencies `composer install --no-dev`
 - remove all files form `sites/default/files` directory `rm --recursive --force docroot/sites/default/files/*`
-- remove `.git` directories `find . -type d -name ".git" | xargs rm --recursive --force` (build script will do this automatically)
 
-After that, you can use `build.sh` script to package that project into docker image
+After that, you can use `build.sh` script to package that project into docker image.
+The command has the following arguments:
+
+**--tag** : The tag to push to docker hub. For example "burda/thunder-performance:standard-efc8141449".
+
+**--project-path** : The directory to find the project to build.
+
+**--profile** : The install profile to use. For example, "thunder" or "standard",
+
+**--test-group** : The test group to run. For example, "standard" or "Thunder_Base_Set". 
+
+#### Example command
 
 `./build.sh --project-path <path to Thunder project> --tag <Docker image tag>`
 
@@ -50,8 +66,11 @@ After that, you can use `build.sh` script to package that project into docker im
 First of all, you have to create an image whenever you change something that could affect docker image content. For example docker scripts, Dockerfile, code in `www` folder, and so on.
 
 1. You can create an image for testing locally with the following command: `./build.sh --tag travis-ci-test:latest`. We are using tag `travis-ci-test:latest`, because we are using the same tag in `test/docker-composer.travis-ci.yml` and we can use existing docker composer file without any changes.
-2. After you have built a docker image for local testing, you can start docker-compose with the following command: `docker-compose --file="test/docker-composer.travis-ci.yml" --project-name test up`. The whole stack requires some time to get up and running. If you get a result after executing: `curl "http://localhost:8080/"`, then the stack is up and running.
-3. Finally, you can run the same checks local as it would be on Travis CI by executing `./test/travis-ci-run.sh`
+2. After you have built a docker image for local testing, you can start docker-compose with the following command: `docker-compose --file="test/docker-composer.thunder.yml" --project-name test up`. The whole stack requires some time to get up and running. This will run the tests.
+
+#### Troubleshooting
+1. Use `docker container prune` to completely remove the database.
+2. Kill all containers after a test run if exiting docker-composer doesn't.
 
 ### Running image on AWS Fargate
 

@@ -19,4 +19,4 @@ mkdir -p "${TRAVIS_BUILD_DIR}/www"
 tar -zxf "${TRAVIS_BUILD_DIR}/../${THUNDER_PROJECT_ARTIFACT_FILE}" -C "${TRAVIS_BUILD_DIR}/www"
 
 # Build image with tag
-./build.sh --tag "travis-ci-test"
+sh -x ./build.sh --tag "travis-ci-test"

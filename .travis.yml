@@ -1,16 +1,29 @@
-language: bash
+language: php
 services: docker
+php: 7.3
+
+cache:
+  apt: true
+  directories:
+    - "$HOME/.composer/cache"
 
 branches:
   only:
     - master
 
+env:
+  matrix:
+    - PROFILE="standard" BRANCH="8.9.x" INSTALL="drupal"
+    - PROFILE="thunder" INSTALL="thunder"
+
 before_install:
-  - shellcheck --exclude=SC2016 scripts/docker/* test/*.sh
+  - shellcheck scripts/docker/* test/*.sh
+  # Drupal needs lots of memory to add new dependencies.
+  - echo "memory_limit=2G" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
 
 install:
-  - bash -x -e ./test/travis-ci-build.sh
+  - bash -x -e ./test/travis-ci-build-${INSTALL}.sh
 
 script:
-  - docker-compose --file "${TRAVIS_BUILD_DIR}/test/docker-composer.travis-ci.yml" --project-name test up &
+  - docker-compose --file "${TRAVIS_BUILD_DIR}/test/docker-composer.${INSTALL}.yml" --project-name test up &
   - bash -x -e ./test/travis-ci-run.sh

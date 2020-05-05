@@ -49,6 +49,12 @@ module.exports = {
       .useCss()
       .waitForElementVisible('body', 10000)
       .assert.containsText('div.messages', 'has been created')
+
+      // Reload the page.
+      .refresh()
+      .waitForElementVisible('body', 10000)
+      .assert.containsText('body', 'Lorem Cat Sum 10. Reasons why cats ipsum')
+
       .performance.endMeasurement();
 
     browser.end();

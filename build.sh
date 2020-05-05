@@ -79,7 +79,14 @@ fi
 if [ -x "$(command -v composer)" ]; then
   # Compose project to ensure dependencies are correct.
   composer install -d "${SCRIPT_DIRECTORY}/www"
-  composer require --update-no-dev -d "${SCRIPT_DIRECTORY}/www" drush/drush:^9 thunder/thunder_performance_measurement thunder/testsite_builder drupal/media_entity_generic drupal/console
+  composer require -d "${SCRIPT_DIRECTORY}/www" drush/drush:^9 thunder/thunder_performance_measurement thunder/testsite_builder drupal/media_entity_generic drupal/console
+  # Coder has uncommitted changes due to Drupal's cleaner removing tests.
+  if [[ "${OS_NAME}" == "osx" ]]; then
+    rm -rf "${SCRIPT_DIRECTORY}/www/vendor/drupal/coder"
+  else
+    rm --recursive --force "${SCRIPT_DIRECTORY}/www/vendor/drupal/coder"
+  fi
+
   composer install --no-dev -d "${SCRIPT_DIRECTORY}/www"
 fi;
 

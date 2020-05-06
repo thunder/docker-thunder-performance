@@ -56,7 +56,11 @@ RUN { \
 		echo 'opcache.max_accelerated_files=10000'; \
 		echo 'opcache.validate_timestamps=0'; \
 		echo 'opcache.fast_shutdown=1'; \
-	} >> /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini;
+	} >> /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini; \
+    \
+    { \
+        echo 'memory_limit=512M'; \
+    } >> /usr/local/etc/php/conf.d/z-custom.ini;
 
 # Create required user - add to sudoers so that the thunder user can run Apache.
 RUN set -xe; \

@@ -42,7 +42,11 @@ RUN set -xe; \
     \
     apt-get clean; \
     \
-    rm --recursive --force /var/lib/apt/lists/*;
+    rm --recursive --force /var/lib/apt/lists/*; \
+    \
+    { \
+        echo 'memory_limit=512M'; \
+    } >> /usr/local/etc/php/conf.d/custom.ini;
 
 # Copy run scripts
 COPY scripts/docker/thunder-php-install /usr/local/bin/

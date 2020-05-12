@@ -50,7 +50,7 @@ COPY scripts/docker/* /usr/local/bin/
 ENV INSTALLATION_DIRECTORY=${INSTALLATION_DIRECTORY}
 RUN set -xe; \
     \
-    echo -e "\nexport PATH=\"\$PATH:${INSTALLATION_DIRECTORY}/bin:${INSTALLATION_DIRECTORY}/vendor/bin\"\n" >> /home/thunder/.profile; \
+    echo -e "\nexport PATH=\"\$PATH:${INSTALLATION_DIRECTORY}/vendor/bin:${INSTALLATION_DIRECTORY}/bin\"\n" >> /home/thunder/.profile; \
     \
     chmod +x /usr/local/bin/drupal-php-install; \
     \

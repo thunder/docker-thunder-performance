@@ -79,7 +79,7 @@ fi
 # Compose project to ensure dependencies are correct.
 cd "${SCRIPT_DIRECTORY}/www"
 composer install
-composer require drush/drush:^9 thunder/thunder_performance_measurement thunder/testsite_builder drupal/media_entity_generic drupal/console
+composer require drush/drush thunder/thunder_performance_measurement thunder/testsite_builder drupal/media_entity_generic drupal/console
 cd "${SCRIPT_DIRECTORY}"
 
 # CleanUp project

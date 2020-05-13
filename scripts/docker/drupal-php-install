@@ -51,6 +51,7 @@ drush --yes site:install "${PROFILE}" --account-name=admin --account-pass=admin 
 drush --yes pm:enable thunder_performance_measurement testsite_builder media_entity_generic
 # Remove modules that can affect performance test based on time.
 drush --yes pm:uninstall automated_cron update
+echo "SetOutputFilter DEFLATE" >> .htaccess
 drush cache:rebuild
 
 # Allow Apache to write to the files directory.

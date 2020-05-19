@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e
 #
 # Server and run Nightwatch JS Tests
 sudo apache2-foreground &

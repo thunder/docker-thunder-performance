@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e
 #
 # Install Thunder and run performance test
 

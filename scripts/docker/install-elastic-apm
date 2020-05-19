@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e
 
 cd "${DOC_ROOT}"/core || exit 1
 yarn add elastic-apm-node --dev

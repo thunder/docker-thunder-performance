@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e
 
 # Drupal core's docroot.
 cd "${INSTALLATION_DIRECTORY}" || exit 1

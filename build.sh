@@ -1,21 +1,6 @@
 #!/bin/bash
 set -e
 
-case $(uname | tr '[:upper:]' '[:lower:]') in
-  linux*)
-    export OS_NAME=linux
-    ;;
-  darwin*)
-    export OS_NAME=osx
-    ;;
-  msys*)
-    export OS_NAME=windows
-    ;;
-  *)
-    export OS_NAME=notset
-    ;;
-esac
-
 #
 # Build thunder performance docker image
 
@@ -67,13 +52,8 @@ SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pw
 
 # Copy Thunder project to Dockerfile context if project path is provided
 if [ "${PROJECT_PATH}" != "" ]; then
-  if [ "${OS_NAME}" == "osx" ]; then
-      rm -rf "${SCRIPT_DIRECTORY}/www"
-      cp -R "${PROJECT_PATH}" "${SCRIPT_DIRECTORY}/www"
-  else
-      rm --recursive --force  "${SCRIPT_DIRECTORY}/www"
-      cp --dereference --recursive "${PROJECT_PATH}" "${SCRIPT_DIRECTORY}/www"
-  fi
+  rm -rf "${SCRIPT_DIRECTORY}/www"
+  cp -R "${PROJECT_PATH}" "${SCRIPT_DIRECTORY}/www"
   # Compose project to ensure dependencies are correct.
   cd "${SCRIPT_DIRECTORY}/www"
   composer require drush/drush thunder/thunder_performance_measurement thunder/testsite_builder drupal/media_entity_generic drupal/console
@@ -85,11 +65,7 @@ fi
 
 # CleanUp project
 # Coder has uncommitted changes due to Drupal's cleaner removing tests.
-if [ "${OS_NAME}" == "osx" ]; then
-  rm -rf "${SCRIPT_DIRECTORY}/www/vendor/drupal/coder"
-else
-  rm --recursive --force "${SCRIPT_DIRECTORY}/www/vendor/drupal/coder"
-fi
+rm -rf "${SCRIPT_DIRECTORY}/www/vendor/drupal/coder"
 
 # Note: do not use -d on composer as it can end up reverting changes.
 cd "${SCRIPT_DIRECTORY}/www"
@@ -97,11 +73,7 @@ composer install --no-dev
 cd "${SCRIPT_DIRECTORY}"
 
 # Remove all git info for smaller docker images.
-if [ "${OS_NAME}" == "osx" ]; then
-  find "${SCRIPT_DIRECTORY}/www" -type d -name ".git" -print0 | xargs -0 rm -rf
-else
-  find "${SCRIPT_DIRECTORY}/www" -type d -name ".git" -print0 | xargs -0 rm --recursive --force
-fi
+find "${SCRIPT_DIRECTORY}/www" -type d -name ".git" -print0 | xargs -0 rm -rf
 
 # Build docker image
 docker build --build-arg PROFILE="${PROFILE}" --build-arg THUNDER_TEST_GROUP="${THUNDER_TEST_GROUP}" "${SCRIPT_DIRECTORY}" --tag "${TAG_NAME}"

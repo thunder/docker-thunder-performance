@@ -59,10 +59,10 @@ if [ "${PROJECT_PATH}" != "" ]; then
   composer require drush/drush thunder/thunder_performance_measurement thunder/testsite_builder drupal/media_entity_generic drupal/console
   cd "${SCRIPT_DIRECTORY}"
 else
-  # Ensure a the minimum of build tools.
-  cd "${SCRIPT_DIRECTORY}/www"
-  composer require drush/drush drupal/console
-  cd "${SCRIPT_DIRECTORY}"
+  # @todo Ensure a the minimum of build tools.
+  # cd "${SCRIPT_DIRECTORY}/www"
+  # composer require drush/drush drupal/console
+  # cd "${SCRIPT_DIRECTORY}"
 fi
 
 # CleanUp project

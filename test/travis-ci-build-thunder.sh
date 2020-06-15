@@ -21,5 +21,8 @@ tar -zxf "${THUNDER_PROJECT_ARTIFACT_FILE}" "thunder"
 
 mv thunder/install "${TRAVIS_BUILD_DIR}/www"
 
+# Removing the bin dir will allow the build.sh composer install --no-dev in build.sh to fix it.
+rm -rf "${TRAVIS_BUILD_DIR}/www/bin"
+
 # Build image with tag
 bash -x ./build.sh --tag "travis-ci-test"

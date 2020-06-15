@@ -66,7 +66,7 @@ if [ "${PROFILE}" == "thunder" ]; then
   curl --silent --output "${DOC_ROOT}"/thunder_test_site_template.json "${THUNDER_TEST_SITE_TEMPLATE}"
 
   # Create test site with downloaded template
-  "${INSTALLATION_DIRECTORY}"/vendor/drupal/console/bin/drupal testsite-builder:create-config "${DOC_ROOT}"/thunder_test_site_template.json --create-content --yes
+  drush testsite-builder:create-config /home/thunder/www/docroot/thunder_test_site_template.json --create-content --yes
 
   drush cache:rebuild
 fi

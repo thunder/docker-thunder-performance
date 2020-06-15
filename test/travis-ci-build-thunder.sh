@@ -17,7 +17,7 @@ THUNDER_PROJECT_ARTIFACT_FILE="build.tgz"
 
 # Extract files to www directory for Docker image packaging
 mkdir -p "${TRAVIS_BUILD_DIR}"
-tar -zxf "${THUNDER_PROJECT_ARTIFACT_FILE}" "thunder"
+tar xCfz "${THUNDER_PROJECT_ARTIFACT_FILE}" "thunder"
 
 mv thunder/install "${TRAVIS_BUILD_DIR}/www"
 

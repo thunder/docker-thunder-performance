@@ -19,6 +19,7 @@ THUNDER_PROJECT_ARTIFACT_FILE="build.tgz"
 mkdir -p "${TRAVIS_BUILD_DIR}"
 tar -zxf "${THUNDER_PROJECT_ARTIFACT_FILE}" "thunder"
 
+rm -rf "${TRAVIS_BUILD_DIR}/www"
 mv thunder/install "${TRAVIS_BUILD_DIR}/www"
 
 # Build image with tag

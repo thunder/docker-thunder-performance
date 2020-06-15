@@ -2,21 +2,24 @@
 #
 # Build Docker image for testing
 
-# Install AWS CLI
-pip install --user awscli
+# Get artifact of latest successful Thunder 8.x-5.x build
+THUNDER_LATEST_ARTIFACT=$(curl -u "$GITHUB_ACCESS" 'https://api.github.com/repos/thunder/thunder-distribution/actions/workflows/test.yml/runs?event=schedule&conclusion=success' --silent | jq --raw-output '.workflow_runs[0].artifacts_url')
 
-# Get latest successful Thunder 8.x-5.x build
-THUNDER_LATEST_BUILD_ID=$(curl --request GET 'https://api.travis-ci.com/v3/repo/thunder%2Fthunder-distribution/builds?branch.name=8.x-5.x&build.state=passed&build.event_type=cron,push&limit=1' --header 'Content-Type: application/json' --silent | jq --raw-output '.builds[0].id')
+# Get artifact download URL
+THUNDER_PROJECT_ARTIFACT_URL=$(curl -u "$GITHUB_ACCESS" "$THUNDER_LATEST_ARTIFACT" --silent | jq --raw-output '.artifacts[0].archive_download_url')
+
+# Download the build zip
+curl -u "$GITHUB_ACCESS" "$THUNDER_PROJECT_ARTIFACT_URL" -LO --silent
+unzip zip
 
 # Thunder project artifact file name
-THUNDER_PROJECT_ARTIFACT_FILE="${THUNDER_LATEST_BUILD_ID}-thunder.tar.gz"
-
-# Download project artifact from S3
-aws s3 cp "s3://thunder-builds/${THUNDER_PROJECT_ARTIFACT_FILE}" "${TRAVIS_BUILD_DIR}/../"
+THUNDER_PROJECT_ARTIFACT_FILE="build.tgz"
 
 # Extract files to www directory for Docker image packaging
-mkdir -p "${TRAVIS_BUILD_DIR}/www"
-tar -zxf "${TRAVIS_BUILD_DIR}/../${THUNDER_PROJECT_ARTIFACT_FILE}" -C "${TRAVIS_BUILD_DIR}/www"
+mkdir -p "${TRAVIS_BUILD_DIR}"
+tar -zxf "${THUNDER_PROJECT_ARTIFACT_FILE}" "thunder"
+
+mv thunder/install "${TRAVIS_BUILD_DIR}/www"
 
 # Build image with tag
 bash -x ./build.sh --tag "travis-ci-test"

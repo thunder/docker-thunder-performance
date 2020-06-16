@@ -32,7 +32,7 @@ docker exec "${TEST_THUNDER_PHP_DOCKER_ID}" su - thunder --command='cd /home/thu
 
 # Workaround for testsite_builder module name until Drush is fixed
 # TODO: Move check back to "drush pm:list" command when Drush issue is fixed (https://github.com/drush-ops/drush/issues/4182)
-docker exec "${TEST_THUNDER_PHP_DOCKER_ID}" su - thunder --command='cd /home/thunder/www/docroot; /home/thunder/www/vendor/drupal/console/bin/drupal debug:module --status=enabled;' | grep --silent "testsite_builder"
+docker exec "${TEST_THUNDER_PHP_DOCKER_ID}" su - thunder --command='cd /home/thunder/www/docroot; drush eval "var_export(\Drupal::moduleHandler()->moduleExists('testsite_builder'))"' | grep --silent "true"
 
 # Check that required Node.JS package is installed for Elastic APM
 docker exec "${TEST_THUNDER_PHP_DOCKER_ID}" su - thunder --command='cd /home/thunder/www/docroot/core/node_modules/elastic-apm-node;'

@@ -28,7 +28,7 @@ curl --silent "http://localhost:8080/" | grep --silent "meta.*Generator.*Thunder
 TEST_THUNDER_PHP_DOCKER_ID=$(docker ps --format 'table {{.Names}}' | grep 'thunder-php')
 
 # Check that relevant modules are installed
-docker exec "${TEST_THUNDER_PHP_DOCKER_ID}" su - thunder --command='cd /home/thunder/www/docroot; drush pm:list --status=enabled --format=json;' | jq --exit-status '.thunder_performance_measurement, .media_entity_generic'
+docker exec "${TEST_THUNDER_PHP_DOCKER_ID}" su - thunder --command='cd /home/thunder/www/docroot; drush pm:list --status=enabled --format=json;' | jq --exit-status '.thunder_performance_measurement'
 
 # Workaround for testsite_builder module name until Drush is fixed
 # TODO: Move check back to "drush pm:list" command when Drush issue is fixed (https://github.com/drush-ops/drush/issues/4182)

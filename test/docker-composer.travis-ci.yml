@@ -22,7 +22,7 @@ services:
       THUNDER_HOST: 'thunder-php'
       ELASTIC_APM_CONTEXT_TAG_BRANCH: 'travis-ci-test'
     ports:
-      - '8080:8080'
+      - '8080:80'
     volumes:
       - 'tmp-dir:/tmp'
 volumes:

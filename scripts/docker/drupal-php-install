@@ -1,0 +1,79 @@
+#!/usr/bin/env bash
+set -e
+#
+# Install Drupal Standard install profile
+
+# If a settings.php exists allow it to be overwritten with the defaults.
+if [ -f "${DOC_ROOT}/sites/default/settings.php" ]; then
+  chmod a+w "${DOC_ROOT}"/sites/default/settings.php
+fi
+
+# Create a settings.php
+cp "${DOC_ROOT}"/sites/default/default.settings.php "${DOC_ROOT}"/sites/default/settings.php
+
+# Add write for settings.php
+chmod a+w "${DOC_ROOT}"/sites/default/settings.php
+
+DB_URL="${DB_DIVER}://${DB_USER}:${DB_PASS}@${DB_HOST}:${DB_PORT}/${DB_NAME}"
+# Tweak .env file for testing
+# .env file
+cp "${DOC_ROOT}"/core/.env.example "${DOC_ROOT}"/core/.env
+{
+  echo "DRUPAL_TEST_WEBDRIVER_CHROME_ARGS='--disable-gpu --headless --no-sandbox --disable-web-security'"
+  echo "DRUPAL_TEST_CHROMEDRIVER_AUTOSTART=false"
+  echo "DRUPAL_TEST_WEBDRIVER_PORT=4444"
+  echo "DRUPAL_TEST_WEBDRIVER_PATH_PREFIX=/wd/hub"
+  echo "DRUPAL_TEST_BASE_URL=http://${THUNDER_HOST}"
+  echo "DRUPAL_TEST_DB_URL=${DB_URL}"
+  echo "DRUPAL_TEST_WEBDRIVER_HOSTNAME=${CHROME_HOST}"
+  echo "THUNDER_BRANCH=${ELASTIC_APM_CONTEXT_TAG_BRANCH}"
+  echo "THUNDER_SITE_HOSTNAME=${THUNDER_HOST}"
+  echo "THUNDER_APM_URL=${ELASTIC_APM_URL}"
+} >>"${DOC_ROOT}"/core/.env
+
+# Install and enable required modules
+cd "${DOC_ROOT}" || exit 1
+
+# Wait for database to be available
+
+count=1
+until nc -z "${DB_HOST}" "${DB_PORT}"; do
+    sleep 1
+    if [[ ${count} -gt 60 ]]; then
+        printf "Error: Timeout while waiting for port %s on host %s.\n" "${DB_HOST}" "${DB_PORT}" 1>&2
+        exit 1
+    fi
+    count=$((count + 1))
+done
+
+
+# Install Thunder site and required modules for building of test site
+drush --yes site:install "${PROFILE}" --account-name=admin --account-pass=admin --db-url="${DB_URL}"
+drush --yes pm:enable thunder_performance_measurement testsite_builder
+# Remove modules that can affect performance test based on time.
+drush --yes pm:uninstall automated_cron update
+drush cache:rebuild
+
+# Allow Apache to write to the files directory.
+chmod 777 "${DOC_ROOT}"/sites/default/files
+
+# Prepare Database for testsite_builder content creator
+# shellcheck disable=SC2016
+drush php:eval '$db = new PDO("mysql:host='"${DB_HOST}"';", "root", "root"); $db->exec("GRANT FILE, SUPER on *.* to '"'"'thunder'"'"';"); $db->exec("FLUSH PRIVILEGES;");'
+
+if [ "${PROFILE}" == "thunder" ]; then
+  # Download test site template
+  curl --silent --output "${DOC_ROOT}"/thunder_test_site_template.json "${THUNDER_TEST_SITE_TEMPLATE}"
+
+  # Create test site with downloaded template
+  drush testsite-builder:create-config /home/thunder/www/docroot/thunder_test_site_template.json --create-content --yes
+
+  drush cache:rebuild
+fi
+
+# Build search_api index
+drush search-api:rebuild-tracker
+drush search-api:index t1_node_bundle_0
+
+# Warm-up thunder_performance_measurement site info endpoint cache
+time drush php:eval 'Drupal\thunder_performance_measurement\Controller\SiteInfoController::create(Drupal::getContainer())->siteInfo(Symfony\Component\HttpFoundation\Request::createFromGlobals());'

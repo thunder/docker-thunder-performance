@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -e
+#
+# Server and run Nightwatch JS Tests
+sudo apache2-foreground &
+
+echo "Wait for Drupal to be ready..."
+while ! curl --output /dev/null --silent --head --fail "http://${THUNDER_HOST}"; do
+    sleep 1
+done
+
+cd "${DOC_ROOT}"/core || exit 1
+
+echo "Starting tests..."
+yarn test:nightwatch --tag "${THUNDER_TEST_GROUP}"

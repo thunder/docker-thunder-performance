@@ -1,24 +1,16 @@
 # hadolint ignore=DL3007
-FROM burda/thunder-php:latest
+FROM burda/thunder-php:apache
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 ARG NVM_VERSION="v0.34.0"
-
-# Create required user
-RUN set -xe; \
-    \
-    adduser --gecos "" --disabled-password thunder; \
-    \
-    usermod --append --groups sudo thunder;
+ARG INSTALLATION_DIRECTORY="/home/thunder/www"
+ARG THUNDER_TEST_GROUP="Thunder_Base_Set"
+ARG PROFILE="thunder"
 
 # Install required libraries and packages
 # hadolint ignore=DL3008
 RUN set -xe; \
-    \
-    apt-get update; \
-    \
-    apt-get install --yes --no-install-recommends gnupg apt-transport-https; \
     \
     curl --silent --show-error https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - ; \
     \
@@ -48,35 +40,51 @@ RUN set -xe; \
         echo 'memory_limit=512M'; \
     } >> /usr/local/etc/php/conf.d/custom.ini;
 
+# Copy code to container
+COPY --chown=thunder:thunder www ${INSTALLATION_DIRECTORY}
+
+# Unfortunately this doesn't quite work as expected.
+# ENV APACHE_RUN_USER=thunder
+
 # Copy run scripts
-COPY scripts/docker/thunder-php-install /usr/local/bin/
-COPY scripts/docker/thunder-php-test /usr/local/bin/
-COPY scripts/docker/thunder-php-run /usr/local/bin/
+COPY scripts/docker/* /usr/local/bin/
 
-# Set executable
+# Set the scripts to be executable. Create a link to thunder-php-test as this is
+# name expected by the runner.
+ENV INSTALLATION_DIRECTORY=${INSTALLATION_DIRECTORY}
 RUN set -xe; \
     \
-    chmod +x /usr/local/bin/thunder-php-install; \
+    echo -e "\nexport PATH=\"\$PATH:${INSTALLATION_DIRECTORY}/vendor/bin:${INSTALLATION_DIRECTORY}/bin\"\n" >> /home/thunder/.profile; \
     \
-    chmod +x /usr/local/bin/thunder-php-test; \
+    chmod +x /usr/local/bin/drupal-php-install; \
     \
-    chmod +x /usr/local/bin/thunder-php-run;
+    chmod +x /usr/local/bin/drupal-php-test; \
+    \
+    chmod +x /usr/local/bin/drupal-php-run; \
+    \
+    chmod +x /usr/local/bin/set-docroot; \
+    \
+    chmod +x /usr/local/bin/install-elastic-apm; \
+    \
+    ln -sfn /usr/local/bin/drupal-php-test /usr/local/bin/thunder-php-test; \
+    \
+    set-docroot; \
+    \
+    cat /home/thunder/.profile;
 
-# Copy pre-build Thunder project to container
-COPY --chown=thunder:thunder www /home/thunder/www
-
-# Install Elastic APM
+# Install Elastic APM - this is run as a shell script so we can install in the
+# doc root.
 RUN set -xe; \
     \
-    su - thunder --command="cd /home/thunder/www/docroot/core; yarn add elastic-apm-node --dev"; \
+    su - thunder --command="install-elastic-apm";
+
+# Provision core tests
+# @todo move this to one of our modules only work with core checkout atm.
+RUN set -xe; \
     \
-    su - thunder --command="yarn cache clean"; \
-    \
-    su - thunder --command="composer global require drush/drush"; \
-    \
-    echo -e "\nexport PATH=\"\$PATH:/home/thunder/.composer/vendor/bin\"\n" >> /home/thunder/.profile; \
-    \
-    su - thunder --command="composer clear-cache";
+    mkdir -p ${INSTALLATION_DIRECTORY}/modules/contrib/testsite_builder/tests;
+
+COPY --chown=thunder:thunder coretests ${INSTALLATION_DIRECTORY}/modules/contrib/testsite_builder/tests
 
 # Define all runtime environments
 ENV DB_HOST="127.0.0.1"
@@ -90,11 +98,12 @@ ENV DB_DIVER="mysql"
 ENV THUNDER_HOST="localhost"
 ENV CHROME_HOST="localhost"
 ENV THUNDER_TEST_SITE_TEMPLATE="https://raw.githubusercontent.com/thunder/thunder-performance-site-templates/master/thunder_base_set.json"
-ENV THUNDER_TEST_GROUP="Thunder_Base_Set"
+ENV THUNDER_TEST_GROUP=${THUNDER_TEST_GROUP}
+ENV PROFILE=${PROFILE}
 
 # Elastic APM integration environments variables
 ENV ELASTIC_APM_URL="http://127.0.0.1:8200"
 ENV ELASTIC_APM_CONTEXT_TAG_BRANCH="master"
 
-EXPOSE 8080/tcp
-CMD ["bash", "-x", "thunder-php-run"]
+EXPOSE 80/tcp
+CMD ["bash", "-x", "drupal-php-run"]

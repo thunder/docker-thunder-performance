@@ -53,9 +53,10 @@ SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pw
 # Copy Thunder project to Dockerfile context if project path is provided
 if [ "${PROJECT_PATH}" != "" ]; then
   ADDITIONAL_DEPS="drush/drush thunder/thunder_performance_measurement thunder/testsite_builder"
-  if [ "${PROFILE}" == "thunder" ]; then
-    ADDITIONAL_DEPS="${ADDITIONAL_DEPS} thunder/thunder_testing_demo"
-  fi
+  # @todo move from thunder_demo to thunder_testing_demo
+  # if [ "${PROFILE}" == "thunder" ]; then
+  #   ADDITIONAL_DEPS="${ADDITIONAL_DEPS} thunder/thunder_testing_demo"
+  # fi
 
   rm -rf "${SCRIPT_DIRECTORY}/www"
   cp -R "${PROJECT_PATH}" "${SCRIPT_DIRECTORY}/www"

@@ -53,9 +53,13 @@ SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pw
 # Copy Thunder project to Dockerfile context if project path is provided
 if [ "${PROJECT_PATH}" != "" ]; then
   ADDITIONAL_DEPS=("drush/drush" "thunder/thunder_performance_measurement" "thunder/testsite_builder")
-  if [ "${PROFILE}" == "thunder" ]; then
-    ADDITIONAL_DEPS+=("thunder/thunder_testing_demo")
-  fi
+  # if [ "${PROFILE}" == "thunder" ]; then
+  #   @todo move from thunder_demo to thunder_testing_demo - in order to do this
+  #   we'll need to fix the fact that under test composer install --no-dev
+  #   removes this when the project path is not passed in. This is how
+  #   test/travis-ci-build-thunder.sh works.
+  #   ADDITIONAL_DEPS+=("thunder/thunder_testing_demo")
+  # fi
 
   rm -rf "${SCRIPT_DIRECTORY}/www"
   cp -R "${PROJECT_PATH}" "${SCRIPT_DIRECTORY}/www"

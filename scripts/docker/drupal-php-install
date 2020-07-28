@@ -49,7 +49,7 @@ done
 
 # Install Thunder site and required modules for building of test site
 drush --yes site:install "${PROFILE}" --account-name=admin --account-pass=admin --db-url="${DB_URL}"
-drush --yes pm:enable thunder_performance_measurement testsite_builder thunder_testing_demo
+drush --yes pm:enable thunder_performance_measurement testsite_builder
 # Remove modules that can affect performance test based on time.
 drush --yes pm:uninstall automated_cron update
 drush cache:rebuild
@@ -62,6 +62,7 @@ chmod 777 "${DOC_ROOT}"/sites/default/files
 drush php:eval '$db = new PDO("mysql:host='"${DB_HOST}"';", "root", "root"); $db->exec("GRANT FILE, SUPER on *.* to '"'"'thunder'"'"';"); $db->exec("FLUSH PRIVILEGES;");'
 
 if [ "${PROFILE}" == "thunder" ]; then
+  drush --yes pm:enable thunder_testing_demo
   # Download test site template
   curl --silent --output "${DOC_ROOT}"/thunder_test_site_template.json "${THUNDER_TEST_SITE_TEMPLATE}"
 

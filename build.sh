@@ -56,7 +56,7 @@ if [ "${PROJECT_PATH}" != "" ]; then
   cp -R "${PROJECT_PATH}" "${SCRIPT_DIRECTORY}/www"
   # Compose project to ensure dependencies are correct.
   cd "${SCRIPT_DIRECTORY}/www"
-  composer require drush/drush thunder/thunder_performance_measurement thunder/testsite_builder
+  composer require drush/drush thunder/thunder_performance_measurement thunder/testsite_builder thunder/thunder_testing_demo
   cd "${SCRIPT_DIRECTORY}"
 #else
   # @todo Ensure a the minimum of build tools.

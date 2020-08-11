@@ -3,7 +3,7 @@
 # Build Docker image for testing
 
 # Get artifact of latest successful Thunder 8.x-5.x build
-THUNDER_LATEST_ARTIFACT=$(curl -u "$GITHUB_ACCESS" 'https://api.github.com/repos/thunder/thunder-distribution/actions/workflows/test.yml/runs?event=schedule&conclusion=success' --silent | jq --raw-output '.workflow_runs[0].artifacts_url')
+THUNDER_LATEST_ARTIFACT=$(curl -u "$GITHUB_ACCESS" 'https://api.github.com/repos/thunder/thunder-distribution/actions/workflows/test.yml/runs?branch=search_api-thunder35' --silent | jq --raw-output '.workflow_runs[0].artifacts_url')
 
 # Get artifact download URL
 THUNDER_PROJECT_ARTIFACT_URL=$(curl -u "$GITHUB_ACCESS" "$THUNDER_LATEST_ARTIFACT" --silent | jq --raw-output '.artifacts[0].archive_download_url')

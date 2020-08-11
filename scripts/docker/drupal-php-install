@@ -54,9 +54,6 @@ drush --yes pm:enable thunder_performance_measurement testsite_builder
 drush --yes pm:uninstall automated_cron update
 drush cache:rebuild
 
-# Allow Apache to write to the files directory.
-chmod 777 "${DOC_ROOT}"/sites/default/files
-
 # Prepare Database for testsite_builder content creator
 # shellcheck disable=SC2016
 drush php:eval '$db = new PDO("mysql:host='"${DB_HOST}"';", "root", "root"); $db->exec("GRANT FILE, SUPER on *.* to '"'"'thunder'"'"';"); $db->exec("FLUSH PRIVILEGES;");'
@@ -75,3 +72,6 @@ fi
 
 # Warm-up thunder_performance_measurement site info endpoint cache
 time drush php:eval 'Drupal\thunder_performance_measurement\Controller\SiteInfoController::create(Drupal::getContainer())->siteInfo(Symfony\Component\HttpFoundation\Request::createFromGlobals());'
+
+# Allow Apache to write to the files directory.
+chmod -R 777 "${DOC_ROOT}"/sites/default/files

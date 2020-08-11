@@ -66,7 +66,15 @@ RUN set -xe; \
     \
     set-docroot; \
     \
-    cat /home/thunder/.profile;
+    cat /home/thunder/.profile; \
+    \
+    # Add www-data to the thunder group so it can write to the
+    # sites/default/files directory.
+    usermod -a -G thunder www-data; \
+    \
+    # Add thunder to the www-data group so it can write to any directories
+    # created by the webserver
+    usermod -a -G www-data thunder;
 
 # Install Elastic APM - this is run as a shell script so we can install in the
 # doc root.

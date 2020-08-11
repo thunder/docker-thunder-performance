@@ -65,7 +65,7 @@ if [ "${PROJECT_PATH}" != "" ]; then
   cp -R "${PROJECT_PATH}" "${SCRIPT_DIRECTORY}/www"
   # Compose project to ensure dependencies are correct.
   cd "${SCRIPT_DIRECTORY}/www"
-  composer require "${ADDITIONAL_DEPS[@]}"
+  COMPOSER_MEMORY_LIMIT=-1 composer require "${ADDITIONAL_DEPS[@]}"
   cd "${SCRIPT_DIRECTORY}"
 #else
   # @todo Ensure a the minimum of build tools.

@@ -70,7 +70,7 @@ if [ "${PROFILE}" == "thunder" ]; then
   drush cache:rebuild
 
   # Build search_api index
-  drush search-api:rebuild-tracker
+  drush search-api:rebuild-tracker t1_node_bundle_0
   drush search-api:index t1_node_bundle_0
 
 fi

@@ -52,32 +52,20 @@ SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pw
 
 # Copy Thunder project to Dockerfile context if project path is provided
 if [ "${PROJECT_PATH}" != "" ]; then
-  ADDITIONAL_DEPS=("drush/drush" "thunder/thunder_performance_measurement" "thunder/testsite_builder")
-  # if [ "${PROFILE}" == "thunder" ]; then
-  #   @todo move from thunder_demo to thunder_testing_demo - in order to do this
-  #   we'll need to fix the fact that under test composer install --no-dev
-  #   removes this when the project path is not passed in. This is how
-  #   test/travis-ci-build-thunder.sh works.
-  #   ADDITIONAL_DEPS+=("thunder/thunder_testing_demo")
-  # fi
-
   rm -rf "${SCRIPT_DIRECTORY}/www"
   cp -R "${PROJECT_PATH}" "${SCRIPT_DIRECTORY}/www"
+fi
+
+if [ "${PROFILE}" != "thunder" ]; then
+  ADDITIONAL_DEPS=("drush/drush" "thunder/thunder_performance_measurement" "thunder/testsite_builder")
+
   # Compose project to ensure dependencies are correct.
   cd "${SCRIPT_DIRECTORY}/www"
   COMPOSER_MEMORY_LIMIT=-1 composer require "${ADDITIONAL_DEPS[@]}"
   cd "${SCRIPT_DIRECTORY}"
-#else
-  # @todo Ensure a the minimum of build tools.
-  # cd "${SCRIPT_DIRECTORY}/www"
-  # composer require drush/drush drupal/console
-  # cd "${SCRIPT_DIRECTORY}"
 fi
 
-# CleanUp project
-# Coder has uncommitted changes due to Drupal's cleaner removing tests.
-rm -rf "${SCRIPT_DIRECTORY}/www/vendor/drupal/coder"
-
+# Call composer install to fix the bin symlinks
 # Note: do not use -d on composer as it can end up reverting changes.
 cd "${SCRIPT_DIRECTORY}/www"
 composer install

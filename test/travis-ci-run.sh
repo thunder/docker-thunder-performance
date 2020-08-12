@@ -2,8 +2,8 @@
 #
 # Build Docker image for testing
 
-# Maximum wait time in seconds (15 mins)
-MAX_WAIT=900
+# Maximum wait time in seconds (25 mins)
+MAX_WAIT=1500
 
 # Prepare max wait time
 CURRENT_TIMESTAMP=$(date +%s)

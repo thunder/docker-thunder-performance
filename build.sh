@@ -80,7 +80,7 @@ rm -rf "${SCRIPT_DIRECTORY}/www/vendor/drupal/coder"
 
 # Note: do not use -d on composer as it can end up reverting changes.
 #cd "${SCRIPT_DIRECTORY}/www"
-#composer install --no-dev
+composer install
 #cd "${SCRIPT_DIRECTORY}"
 
 # Remove all git info for smaller docker images.

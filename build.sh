@@ -79,9 +79,9 @@ fi
 rm -rf "${SCRIPT_DIRECTORY}/www/vendor/drupal/coder"
 
 # Note: do not use -d on composer as it can end up reverting changes.
-#cd "${SCRIPT_DIRECTORY}/www"
+cd "${SCRIPT_DIRECTORY}/www"
 composer install
-#cd "${SCRIPT_DIRECTORY}"
+cd "${SCRIPT_DIRECTORY}"
 
 # Remove all git info for smaller docker images.
 find "${SCRIPT_DIRECTORY}/www" -type d -name ".git" -print0 | xargs -0 rm -rf

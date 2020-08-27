@@ -34,7 +34,11 @@ RUN set -xe; \
     \
     apt-get clean; \
     \
-    rm --recursive --force /var/lib/apt/lists/*;
+    rm --recursive --force /var/lib/apt/lists/*; \
+    \
+    { \
+        echo 'memory_limit=512M'; \
+    } >> /usr/local/etc/php/conf.d/custom.ini;
 
 # Copy code to container
 COPY --chown=thunder:thunder www ${INSTALLATION_DIRECTORY}
